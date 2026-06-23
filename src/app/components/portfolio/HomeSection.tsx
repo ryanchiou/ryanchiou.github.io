@@ -1,4 +1,5 @@
 import { CalligraphyWriter } from "./CalligraphyWriter";
+import { WaterFeature } from "./WaterFeature";
 
 const metaRows = [
   { label: "Location:", value: "san francisco bay area" },
@@ -15,14 +16,18 @@ export function HomeSection() {
       {/* Nav lives in the fixed ScrollNav; the hero only holds the name block. */}
 
       {/* Hero row — anchored toward the bottom */}
-      <div className="flex flex-1 items-end pb-[18vh]">
+      <div className="relative flex flex-1 items-end pb-[18vh]">
         {/* The content block is the only in-flow child, so it defines the row's
-            height. The calligraphy is absolutely positioned (top-0/bottom-0) so
-            its height equals that block exactly, and the image derives its own
-            width from its natural 1:3 ratio. */}
+            height. Both the calligraphy and the shan-shui artwork are absolutely
+            positioned (top-0/bottom-0), so they share this block's exact height —
+            the artwork measures it and composes the landscape around the glyphs.
+            Layering: artwork-back (z-0) → calligraphy (z-10) → artwork-front (z-20). */}
         <div className="relative w-full">
+          {/* Shan-shui artwork — watercolor water, pines, mist, seals */}
+          <WaterFeature />
+
           {/* Content block — the Le-Labo-style self-describing label */}
-          <div className="max-w-[640px]">
+          <div className="relative z-10 max-w-[640px]">
             <h1 className="font-display text-[48px] font-bold leading-none text-white max-[600px]:text-[32px]">
               Ryan Chiou
             </h1>
@@ -48,7 +53,7 @@ export function HomeSection() {
           </div>
 
           {/* Calligraphy 邱永建 — height matched to the content block (desktop) */}
-          <CalligraphyWriter className="absolute bottom-0 right-0 top-0 hidden flex-col items-end justify-center select-none md:flex" />
+          <CalligraphyWriter className="absolute bottom-0 right-0 top-0 z-10 hidden flex-col items-end justify-center select-none md:flex" />
         </div>
       </div>
 

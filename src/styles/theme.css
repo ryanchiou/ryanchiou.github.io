@@ -215,6 +215,61 @@
   50% { transform: translateY(6px); }
 }
 
+/* ── Shan-shui (山水) hero artwork ───────────────────────────────────
+   A restrained, watercolor reading of classical Chinese landscape painting in
+   the calligraphy column. Motion is slow and atmospheric — drifting mist, a
+   breathing wash, spreading ripples, and pines that grow in then barely sway. */
+
+/* layered water washes — a gentle "breathing" of pigment density */
+.ss-wash { animation: ssBreathe 8s ease-in-out infinite; }
+@keyframes ssBreathe {
+  0%, 100% { opacity: 0.86; }
+  50% { opacity: 1; }
+}
+
+/* mist bands drift sideways and bloom slightly (--o = base opacity) */
+.ss-mist {
+  transform-box: view-box;
+  animation: ssMist 16s ease-in-out infinite;
+}
+@keyframes ssMist {
+  0%, 100% { transform: translateX(0); opacity: var(--o, 0.1); }
+  50% { transform: translateX(-7px); opacity: calc(var(--o, 0.1) * 1.7); }
+}
+
+/* ripples spreading where the flow catches on the brush strokes */
+.ss-ripple { animation: ssRipple 6.5s ease-out infinite; }
+@keyframes ssRipple {
+  0% { transform: scale(0.45); opacity: 0; }
+  22% { opacity: 0.5; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+/* pines grow up from the pool, then breathe with the lightest sway */
+.ss-grow { animation: ssGrow 1.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes ssGrow {
+  from { transform: scaleY(0.03); opacity: 0; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+.ss-sway { animation: ssSway 10s ease-in-out infinite; }
+@keyframes ssSway {
+  0%, 100% { transform: rotate(-1deg); }
+  50% { transform: rotate(1deg); }
+}
+
+/* seals settle in last */
+.ss-seal { animation: ssSeal 1.2s ease-out both; }
+@keyframes ssSeal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ss-wash, .ss-mist, .ss-ripple, .ss-grow, .ss-sway, .ss-seal {
+    animation: none;
+  }
+}
+
 /* Prism-inspired hero background */
 .hero-prism-background {
   position: absolute;
