@@ -1,0 +1,128 @@
+/* Roboto family – open-source (Apache 2.0), loaded from Google Fonts.
+   - Roboto Condensed → name header (bold 700) + Location/Current labels (medium 500)
+   - Roboto           → navbar + gallery tile headers (medium 500) */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@500;700&family=Roboto:wght@500&display=swap');
+
+/* SF Pro Display – use local system font when available, then project copy */
+@font-face {
+  font-family: 'SF Pro Display';
+  src:
+    local('SF Pro Display'),
+    url('/fonts/SF-Pro-Display-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src:
+    local('SF Pro Display Medium'),
+    url('/fonts/SF-Pro-Display-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src:
+    local('SF Pro Display Semibold'),
+    url('/fonts/SF-Pro-Display-Semibold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src:
+    local('SF Pro Display Bold'),
+    url('/fonts/SF-Pro-Display-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* SF Pro Text */
+@font-face {
+  font-family: 'SF Pro Text';
+  src:
+    local('SF Pro Text'),
+    url('/fonts/SF-Pro-Text-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SF Pro Text';
+  src:
+    local('SF Pro Text Medium'),
+    url('/fonts/SF-Pro-Text-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SF Pro Text';
+  src:
+    local('SF Pro Text Semibold'),
+    url('/fonts/SF-Pro-Text-Semibold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SF Pro Text';
+  src:
+    local('SF Pro Text Bold'),
+    url('/fonts/SF-Pro-Text-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* SF Pro – alias for display/semibold (Figma "SF Pro Semibold") */
+@font-face {
+  font-family: 'SF Pro';
+  src:
+    local('SF Pro Display Semibold'),
+    url('/fonts/SF-Pro-Display-Semibold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+/* ── Editorial hero typefaces ───────────────────────────────────────
+   Roboto Condensed (above, via Google Fonts) covers the name header,
+   nav, and label keys. Magda Clean Mono is self-hosted from
+   /public/fonts for the monospace metadata values. */
+@font-face {
+  font-family: 'Magda Clean Mono';
+  src:
+    local('Magda Clean Mono'),
+    url('/fonts/MagdaCleanMono-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Cal Sans — self-hosted display face for the Skins wordmark. */
+@font-face {
+  font-family: 'Cal Sans';
+  src: url('/fonts/CalSans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* EB Garamond — self-hosted serif (OFL) for the Tally wordmark. */
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('/fonts/EBGaramond-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('/fonts/EBGaramond-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
