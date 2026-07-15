@@ -4,10 +4,12 @@ import EmailIcon from "@mui/icons-material/Email";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import XIcon from "@mui/icons-material/X";
 
+// Projects is a section of the home page, so it stays an anchor on "/"; About
+// and Resume are their own routes (both placeholders for now).
 export const navItems = [
-  { label: "Projects", href: "#projects", active: true },
-  { label: "About", href: "#about", active: false },
-  { label: "Resume", href: "#resume", active: false },
+  { label: "Projects", href: "/#projects", active: true },
+  { label: "About", href: "/about", active: false },
+  { label: "Resume", href: "/resume", active: false },
 ];
 
 type SocialLink = {
@@ -23,21 +25,27 @@ export const socialLinks: SocialLink[] = [
   { label: "Email", href: "mailto:ryann.chiou@gmail.com", Icon: EmailIcon },
 ];
 
-// Smooth-scroll in-page nav clicks to their section. The global CSS keeps
-// scroll-behavior: auto (instant) for high-refresh displays, so we opt into
-// smooth here per-click — and fall back to an instant jump when the visitor
-// prefers reduced motion or the target isn't on the page.
-export function handleNavClick(
-  event: MouseEvent<HTMLAnchorElement>,
-  href: string,
-) {
-  if (!href.startsWith("#")) return;
+// Smooth-scroll a nav click when its target is already on the page. The global
+// CSS keeps scroll-behavior: auto (instant) for high-refresh displays, so we opt
+// into smooth here per-click — and fall back to an instant jump when the visitor
+// prefers reduced motion.
+//
+// Returning without preventDefault hands the click back to <Link>, which routes
+// it: that covers /about and /resume, and Projects clicked from another page.
+//
+// The scroll is deliberately not written to the URL. Projects is part of the
+// home page, not a destination of its own, so the address stays "/" while the
+// href keeps the fragment — which is what makes cmd-click, "copy link address",
+// and a no-JS load still land on the section.
+export function handleNavClick(event: MouseEvent<HTMLAnchorElement>, href: string) {
+  const [path, hash] = href.split("#");
+  if (!hash) return; // a plain route — let Link handle it
+  if (path !== window.location.pathname) return; // different page — Link first, then scroll on arrival
 
-  const target = document.getElementById(href.slice(1));
-  if (!target) return; // unknown anchor — let the browser handle it
+  const target = document.getElementById(hash);
+  if (!target) return;
 
   event.preventDefault();
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
-  history.pushState(null, "", href);
 }

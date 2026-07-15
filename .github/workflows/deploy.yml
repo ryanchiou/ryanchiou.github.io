@@ -30,6 +30,14 @@ jobs:
 
       - run: npm run build
 
+      # GitHub Pages is a static host with no rewrite rules, so a direct hit on
+      # a client-side route (/about, /tesla) would 404. Serving the built app as
+      # the 404 page hands those URLs back to the router. Must be copied from the
+      # build output, not index.html at the repo root — the asset filenames are
+      # content-hashed at build time.
+      - name: SPA fallback for client-side routes
+        run: cp dist/index.html dist/404.html
+
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3

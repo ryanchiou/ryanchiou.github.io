@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "@/app/router";
 import { navItems, handleNavClick } from "./navConfig";
 
 // The single, fixed navbar: it rests at the top of the page and fades back in
@@ -50,9 +51,9 @@ export function ScrollNav() {
       <div className="mx-auto max-w-[1512px]">
         <nav className="flex flex-wrap items-center gap-x-12 gap-y-2 px-[8%] py-[18px] sm:px-[10%] lg:px-[12%]">
           {navItems.map(({ label, href, active }) => (
-            <a
+            <Link
               key={label}
-              href={href}
+              to={href}
               onClick={(event) => handleNavClick(event, href)}
               aria-current={active ? "page" : undefined}
               tabIndex={visible ? undefined : -1}
@@ -61,7 +62,7 @@ export function ScrollNav() {
               }`}
             >
               {label}
-            </a>
+            </Link>
           ))}
         </nav>
       </div>

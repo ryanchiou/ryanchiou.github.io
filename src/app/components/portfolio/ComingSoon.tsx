@@ -1,3 +1,5 @@
+import { Link } from "@/app/router";
+
 // Placeholder page for any destination that isn't built yet — every project
 // tile and the inactive navbar items (About, Resume) route here. A blank black
 // screen with the wordmark centered in the site's display face (Roboto
@@ -13,12 +15,12 @@ export function ComingSoon() {
           Coming Soon
         </h1>
 
-        <a
-          href="#home"
+        <Link
+          to="/"
           className="absolute left-1/2 top-full mt-8 -translate-x-1/2 whitespace-nowrap font-mono text-[13px] uppercase tracking-[0.18em] text-meta transition-opacity duration-150 hover:opacity-60"
         >
           ← Back
-        </a>
+        </Link>
       </div>
     </div>
   );

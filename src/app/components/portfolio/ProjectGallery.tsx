@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Link } from "@/app/router";
 import teslaLogo from "@/assets/tiles_corp/tesla_logo.jpg";
 import ibmLogo from "@/assets/tiles_corp/ibmlogo.jpg";
 // Project photos are CAD renders on white, pre-cropped to the object's bounding
@@ -80,7 +81,7 @@ const projects: Project[] = [
     col: 1,
     title: "Tesla",
     subtitle: "Battery & Energy Plastics",
-    href: "#tesla",
+    href: "/tesla",
     tags: ["Injection Molding", "DFMA", "RCA"],
     aspect: "16 / 9",
     // Logo JPG is tagged Display P3, so the browser color-manages its #CE3642
@@ -102,7 +103,7 @@ const projects: Project[] = [
     col: 1,
     title: "Triggerfish",
     subtitle: "Deep Sea ROV",
-    href: "#deep-sea-rov",
+    href: "/deep-sea-rov",
     tags: ["FDM + Resin 3D Printing", "Raspberry Pi"],
     // ~square crop framing the ROV thruster render (object aspect 1.16).
     aspect: "6 / 5",
@@ -117,7 +118,7 @@ const projects: Project[] = [
     col: 1,
     title: "Carbon Fiber Undertray",
     subtitle: "Geometry Optimization",
-    href: "#undertray",
+    href: "/undertray",
     tags: ["CFD", "Composite Mfg"],
     aspect: "16 / 10",
     src: undertrayImg,
@@ -133,8 +134,8 @@ const projects: Project[] = [
     kind: "photo",
     col: 2,
     title: "Guccibot",
-    subtitle: "Single DOF Input Robot",
-    href: "#guccibot",
+    subtitle: "Single-Input Planetary Walker",
+    href: "/guccibot",
     tags: ["CAD", "Mechanism Design"],
     aspect: "7 / 5",
     src: guccibotImg,
@@ -146,7 +147,7 @@ const projects: Project[] = [
     col: 2,
     title: "Tally",
     subtitle: "Viral Social Accountability Platform",
-    href: "#tally",
+    href: "/tally",
     tags: ["Product Mgmt", "Product Design"],
     aspect: "16 / 9",
     background: "#161b2b",
@@ -165,7 +166,7 @@ const projects: Project[] = [
     col: 2,
     title: "HV System Enclosure",
     subtitle: "Inverter Discharge & Energy Meter",
-    href: "#hvbox",
+    href: "/hvbox",
     tags: ["Electronics Packaging", "Sheet Metal Design"],
     aspect: "1 / 1",
     src: hvboxImg,
@@ -181,7 +182,7 @@ const projects: Project[] = [
     col: 3,
     title: "Skins",
     subtitle: "Personalized Skin Care App",
-    href: "#skins",
+    href: "/skins",
     tags: ["UI/UX", "Swift", "Figma"],
     aspect: "16 / 10",
     // Figma spec: horizontal linear gradient, 5 evenly-spaced stops
@@ -202,7 +203,7 @@ const projects: Project[] = [
     col: 3,
     title: "IBM",
     subtitle: "AI Enterprise Hardware",
-    href: "#ibm",
+    href: "/ibm",
     tags: ["Python", "SQL", "Quality Mgmt"],
     aspect: "16 / 9",
     // Image background is the same IBM blue, so it blends into the block
@@ -223,7 +224,7 @@ const projects: Project[] = [
     col: 3,
     title: "Tesseract",
     subtitle: "Sub-7 Liter PC",
-    href: "#tesseract",
+    href: "/tesseract",
     tags: ["Computer Hardware", "Cooling Optimization"],
     // Short landscape tile, a touch taller than the 16/9 & 16/10 neighbours.
     aspect: "4 / 3",
@@ -347,8 +348,8 @@ function ProjectCard({ project }: { project: Project }) {
   }
 
   return (
-    <a
-      href={project.href}
+    <Link
+      to={project.href}
       className="group block cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
     >
       <div className="w-full" style={{ aspectRatio: project.aspect }}>
@@ -365,7 +366,7 @@ function ProjectCard({ project }: { project: Project }) {
           {project.subtitle}
         </p>
       </div>
-    </a>
+    </Link>
   );
 }
 
