@@ -352,7 +352,13 @@ function ProjectCard({ project }: { project: Project }) {
       to={project.href}
       className="group block cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
     >
-      <div className="w-full" style={{ aspectRatio: project.aspect }}>
+      {/* Interactive shrink — the panel eases down to 96% under the cursor and
+          springs back to full size on leave. transform-gpu keeps the scale on
+          the compositor so the tile stays crisp; the caption below is untouched. */}
+      <div
+        className="w-full transform-gpu transition-transform duration-300 ease-out will-change-transform group-hover:scale-[0.96]"
+        style={{ aspectRatio: project.aspect }}
+      >
         <ProjectPanel project={project} />
       </div>
 
