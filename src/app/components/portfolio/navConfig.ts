@@ -3,13 +3,24 @@ import type { MouseEvent } from "react";
 import EmailIcon from "@mui/icons-material/Email";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import XIcon from "@mui/icons-material/X";
+import resumePdf from "@/assets/Ryan_Chiou_Resume.pdf";
 
-// Projects is a section of the home page, so it stays an anchor on "/"; About
-// and Resume are their own routes (both placeholders for now).
-export const navItems = [
+type NavItem = {
+  label: string;
+  href: string;
+  // Whether the destination exists yet (drives the built-in styling).
+  active: boolean;
+  // External links open in a new tab and bypass the in-page router — used for
+  // the resume, which is just the PDF, not a page on the site.
+  external?: boolean;
+};
+
+// Projects is a section of the home page, so it stays an anchor on "/"; About is
+// its own route (still a placeholder); Resume points straight at the PDF.
+export const navItems: NavItem[] = [
   { label: "Projects", href: "/#projects", active: true },
   { label: "About", href: "/about", active: false },
-  { label: "Resume", href: "/resume", active: false },
+  { label: "Resume", href: resumePdf, active: false, external: true },
 ];
 
 type SocialLink = {

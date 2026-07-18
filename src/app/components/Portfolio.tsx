@@ -3,8 +3,9 @@ import { useLocation } from "@/app/router";
 import { ComingSoon, HomeSection, ProjectGallery, ScrollNav } from "./portfolio/index";
 
 // The only paths backed by real content. Everything else — every project tile
-// (/tesla, /guccibot, …) and the unbuilt navbar pages (/about, /resume) — falls
-// through to the Coming Soon screen, which doubles as the 404.
+// (/tesla, /guccibot, …) and the unbuilt navbar pages (/about) — falls through
+// to the Coming Soon screen, which doubles as the 404. Resume isn't a page: the
+// navbar links straight to the PDF, so it never routes here.
 const CONTENT_PATHS = new Set(["/"]);
 
 function hasContent(path: string) {
