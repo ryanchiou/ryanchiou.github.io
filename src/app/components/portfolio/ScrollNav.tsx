@@ -50,20 +50,41 @@ export function ScrollNav() {
           the hero's nav axis on wide screens. */}
       <div className="mx-auto max-w-[1512px]">
         <nav className="flex flex-wrap items-center gap-x-12 gap-y-2 px-[8%] py-[18px] sm:px-[10%] lg:px-[12%]">
-          {navItems.map(({ label, href, active }) => (
-            <Link
-              key={label}
-              to={href}
-              onClick={(event) => handleNavClick(event, href)}
-              aria-current={active ? "page" : undefined}
-              tabIndex={visible ? undefined : -1}
-              className={`font-roboto font-medium text-[14px] tracking-wide transition duration-150 ${
-                active ? "text-accent-blue hover:text-[#ADD4FF]" : "text-white hover:opacity-70"
-              }`}
-            >
-              {label}
-            </Link>
-          ))}
+          {navItems.map(({ label, href, active, external }) => {
+            const className = `font-roboto font-medium text-[14px] tracking-wide transition duration-150 ${
+              active ? "text-accent-blue hover:text-[#ADD4FF]" : "text-white hover:opacity-70"
+            }`;
+
+            // External links (the resume PDF) open in a new tab and skip the
+            // in-page router entirely.
+            if (external) {
+              return (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  tabIndex={visible ? undefined : -1}
+                  className={className}
+                >
+                  {label}
+                </a>
+              );
+            }
+
+            return (
+              <Link
+                key={label}
+                to={href}
+                onClick={(event) => handleNavClick(event, href)}
+                aria-current={active ? "page" : undefined}
+                tabIndex={visible ? undefined : -1}
+                className={className}
+              >
+                {label}
+              </Link>
+            );
+          })}
         </nav>
       </div>
     </div>
