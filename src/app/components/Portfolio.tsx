@@ -46,9 +46,12 @@ export default function Portfolio() {
   if (showComingSoon) return <ComingSoon />;
 
   return (
-    <div className="bg-frame relative min-h-screen w-full cursor-auto" data-name="Landing">
+    <div className="relative min-h-screen w-full cursor-auto bg-panel" data-name="Landing">
       <ScrollNav />
-      <div className="relative mx-auto w-full max-w-[1512px]">
+      {/* Full-bleed: the sections carry percentage gutters, so the layout keeps
+          its proportions at any viewport width instead of capping out and
+          letting the page background show as bars on either side. */}
+      <div className="relative w-full">
         <HomeSection />
         <ProjectGallery />
       </div>

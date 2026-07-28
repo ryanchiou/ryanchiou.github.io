@@ -67,6 +67,11 @@ type PlaceholderProject = {
 
 type Project = BrandProject | PhotoProject | PlaceholderProject;
 
+/* Wordmark tiles (tally, Skins): the mark grows with the viewport up to the
+   1512px design size (36px), holds there, then resumes scaling past it so it
+   keeps pace with the tile on wide screens. */
+const markSize = "text-[clamp(20px,min(4.2vw,max(36px,2.38vw)),52px)]";
+
 // Placement is explicit: each tile names its column, and the gallery renders
 // three independent columns (no auto-balancing). Reading left→right, top→bottom
 // the tiles number 1..9:
@@ -152,7 +157,7 @@ const projects: Project[] = [
     aspect: "16 / 9",
     background: "#161b2b",
     logo: (
-      <span className="font-garamond text-[clamp(20px,4.2vw,36px)] leading-none text-white">
+      <span className={`font-garamond ${markSize} leading-none text-white`}>
         tally.
       </span>
     ),
@@ -192,7 +197,7 @@ const projects: Project[] = [
     background:
       "linear-gradient(to right, rgba(255,231,209,0) 0%, rgba(230,188,152,0.5) 25%, rgba(212,170,120,0.75) 50%, rgba(161,110,75,0.88) 75%, rgba(104,70,57,1) 100%), #FFFFFF",
     logo: (
-      <span className="font-cal text-[clamp(20px,4.2vw,36px)] leading-none text-white">
+      <span className={`font-cal ${markSize} leading-none text-white`}>
         Skins
       </span>
     ),
@@ -293,7 +298,7 @@ function ProjectPanel({ project }: { project: BrandProject | PhotoProject }) {
   // Placeholder panel until a real product photo is wired in.
   return (
     <div className={`${panelClass} bg-white`}>
-      <span aria-hidden className="font-roboto font-medium text-[15px] text-black/20">
+      <span aria-hidden className="font-roboto font-medium text-[clamp(15px,0.99vw,21px)] text-black/20">
         {project.title}
       </span>
       <CardOverlay />
@@ -320,7 +325,7 @@ function TileTags({ tags }: { tags?: string[] }) {
       {tags.map((tag) => (
         <span
           key={tag}
-          className="rounded-sm bg-white px-3 py-1.5 font-mono text-[12px] leading-none text-black shadow-sm"
+          className="rounded-sm bg-white px-3 py-1.5 font-mono text-[clamp(12px,0.79vw,17px)] leading-none text-black shadow-sm"
         >
           {tag}
         </span>
@@ -365,10 +370,10 @@ function ProjectCard({ project }: { project: Project }) {
       {/* Caption — left-aligned, directly below the panel. Title in
           Roboto (matches the nav); subtitle in Magda mono. */}
       <div className="pt-3">
-        <h3 className="font-roboto font-medium text-[17px] tracking-wide leading-tight text-white">
+        <h3 className="font-roboto font-medium text-[clamp(17px,1.12vw,24px)] tracking-wide leading-tight text-white">
           {project.title}
         </h3>
-        <p className="mt-1.5 font-mono text-[13px] leading-snug text-meta">
+        <p className="mt-1.5 font-mono text-[clamp(13px,0.86vw,18px)] leading-snug text-meta">
           {project.subtitle}
         </p>
       </div>
@@ -386,9 +391,9 @@ export function ProjectGallery() {
       {/* Explicit columns: each column is an independent top-aligned stack, so
           tiles land exactly where assigned and differing heights stagger the
           columns. Stacks to one column below lg. */}
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-start">
+      <div className="flex flex-col gap-[clamp(12px,0.79vw,20px)] lg:flex-row lg:items-start">
         {([1, 2, 3] as const).map((col) => (
-          <div key={col} className="flex flex-1 flex-col gap-3">
+          <div key={col} className="flex flex-1 flex-col gap-[clamp(12px,0.79vw,20px)]">
             {projects
               .filter((project) => project.col === col)
               .map((project) => (

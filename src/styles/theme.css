@@ -135,8 +135,7 @@
   --font-garamond: 'EB Garamond', Georgia, serif;
   --font-mono: 'Magda Clean Mono', ui-monospace, SFMono-Regular, monospace;
 
-  --color-frame: #1a1a1a;        /* near-black outer frame */
-  --color-panel: #000000;        /* pure black */
+  --color-panel: #000000;        /* pure black — the page is full-bleed */
   --color-meta: #8a8a8a;         /* secondary metadata */
   --color-meta-bright: #b8b8b8;  /* slightly brighter metadata */
   --color-accent-blue: #1a4fff;  /* electric blue — active nav only */
