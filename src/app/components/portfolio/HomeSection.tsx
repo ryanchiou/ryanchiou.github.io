@@ -21,25 +21,29 @@ export function HomeSection() {
             its height equals that block exactly, and the image derives its own
             width from its natural 1:3 ratio. */}
         <div className="relative w-full">
-          {/* Content block — the Le-Labo-style self-describing label */}
-          <div className="max-w-[640px]">
-            <h1 className="font-display text-[48px] font-bold leading-none text-white max-[600px]:text-[32px]">
+          {/* Content block — the Le-Labo-style self-describing label.
+              Sizes are clamp(design px, design px / 1512 * 100vw, cap): they
+              hold the 1512px-canvas values on anything narrower and grow with
+              the viewport past it, so the block keeps its proportions on wide
+              displays (and when the browser is zoomed out). */}
+          <div className="max-w-[clamp(640px,42.3vw,900px)]">
+            <h1 className="font-display text-[clamp(48px,3.17vw,68px)] font-bold leading-none text-white max-[600px]:text-[32px]">
               Ryan Chiou
             </h1>
-            <p className="mt-5 font-mono text-[14px] uppercase tracking-[0.18em] text-meta">
+            <p className="mt-5 font-mono text-[clamp(14px,0.93vw,20px)] uppercase tracking-[0.18em] text-meta">
               Mechanical Engineer / Designer
             </p>
-            <p className="mt-3 font-mono text-[14px] tracking-[0.1em] text-meta-bright">
+            <p className="mt-3 font-mono text-[clamp(14px,0.93vw,20px)] tracking-[0.1em] text-meta-bright">
               IBM / Tesla / tally
             </p>
 
             <dl className="mt-10 space-y-3">
               {metaRows.map(({ label, value }) => (
                 <div key={label} className="flex items-baseline gap-x-5">
-                  <dt className="w-[80px] shrink-0 font-condensed font-medium text-[16px] tracking-wide text-white sm:w-[92px]">
+                  <dt className="w-[80px] shrink-0 font-condensed font-medium text-[clamp(16px,1.06vw,22px)] tracking-wide text-white sm:w-[clamp(92px,6.1vw,128px)]">
                     {label}
                   </dt>
-                  <dd className="min-w-0 font-mono text-[13px] lowercase text-meta sm:text-[14px]">
+                  <dd className="min-w-0 font-mono text-[13px] lowercase text-meta sm:text-[clamp(14px,0.93vw,20px)]">
                     {value}
                   </dd>
                 </div>

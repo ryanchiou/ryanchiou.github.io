@@ -49,9 +49,9 @@ export function ScrollNav() {
       {/* Constrain to the same max width as the page so the links line up with
           the hero's nav axis on wide screens. */}
       <div className="mx-auto max-w-[1512px]">
-        <nav className="flex flex-wrap items-center gap-x-12 gap-y-2 px-[8%] py-[18px] sm:px-[10%] lg:px-[12%]">
+        <nav className="flex flex-wrap items-center gap-x-[clamp(48px,3.2vw,68px)] gap-y-2 px-[8%] py-[18px] sm:px-[10%] lg:px-[12%]">
           {navItems.map(({ label, href, active, external }) => {
-            const className = `font-roboto font-medium text-[14px] tracking-wide transition duration-150 ${
+            const className = `font-roboto font-medium text-[clamp(14px,0.93vw,20px)] tracking-wide transition duration-150 ${
               active ? "text-accent-blue hover:text-[#ADD4FF]" : "text-white hover:opacity-70"
             }`;
 
