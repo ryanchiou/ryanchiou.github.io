@@ -50,9 +50,9 @@ export function ScrollNav() {
           would break alignment on wide viewports: the bar would center inside
           the cap while the hero kept measuring its gutter against the full
           viewport, drifting the links right of the hero's left axis. */}
-      <nav className="flex flex-wrap items-center gap-x-[clamp(48px,3.2vw,68px)] gap-y-2 px-[8%] py-[clamp(18px,1.19vw,26px)] sm:px-[10%] lg:px-[12%]">
+      <nav className="flex flex-wrap items-center gap-x-[clamp(30px,1.98vw,40px)] gap-y-2 px-[8%] py-[clamp(18px,1.19vw,24px)] sm:px-[10%] lg:px-[12%]">
         {navItems.map(({ label, href, active, external }) => {
-          const className = `font-roboto font-medium text-[clamp(14px,0.93vw,20px)] tracking-wide transition duration-150 ${
+          const className = `font-roboto font-medium text-[clamp(14px,0.93vw,17px)] tracking-wide transition duration-150 ${
             active ? "text-accent-blue hover:text-[#ADD4FF]" : "text-white hover:opacity-70"
           }`;
 
