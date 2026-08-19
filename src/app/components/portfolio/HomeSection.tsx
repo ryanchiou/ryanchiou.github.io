@@ -27,7 +27,9 @@ export function HomeSection() {
               the viewport past it, so the block keeps its proportions on wide
               displays (and when the browser is zoomed out). */}
           <div className="max-w-[clamp(640px,42.3vw,900px)]">
-            <h1 className="font-display text-[clamp(48px,3.17vw,68px)] font-bold leading-none text-white max-[600px]:text-[32px]">
+            {/* Semibold rather than bold: at this size Roboto Condensed 700
+                reads as a slab and overpowers the mono metadata under it. */}
+            <h1 className="font-display text-[clamp(40px,2.65vw,54px)] font-semibold leading-none tracking-[-0.01em] text-white max-[600px]:text-[28px]">
               Ryan Chiou
             </h1>
             <p className="mt-5 font-mono text-[clamp(14px,0.93vw,20px)] uppercase tracking-[0.18em] text-meta">

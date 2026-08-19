@@ -1,7 +1,7 @@
 /* Roboto family – open-source (Apache 2.0), loaded from Google Fonts.
-   - Roboto Condensed → name header (bold 700) + Location/Current labels (medium 500)
+   - Roboto Condensed → name header (semibold 600) + Location/Current labels (medium 500)
    - Roboto           → navbar + gallery tile headers (medium 500) */
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@500;700&family=Roboto:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@500;600&family=Roboto:wght@500&display=swap');
 
 /* SF Pro Display – use local system font when available, then project copy */
 @font-face {
