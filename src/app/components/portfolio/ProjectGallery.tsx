@@ -141,7 +141,7 @@ const projects: Project[] = [
     title: "Guccibot",
     subtitle: "Single-Input Planetary Walker",
     href: "/guccibot",
-    tags: ["Robotics Mechanisms", "Fusion360"],
+    tags: ["Robotics Mechanisms", "Fusion 360"],
     aspect: "7 / 5",
     src: guccibotImg,
     alt: "Guccibot single-DOF input walking robot",
@@ -172,7 +172,7 @@ const projects: Project[] = [
     title: "HV System Enclosure",
     subtitle: "Inverter Discharge & Energy Meter",
     href: "/hvbox",
-    tags: ["Electronics Integration", "Creo", "Sheet Metal Design",],
+    tags: ["Electronics Integration", "Creo", "Sheet Metal",],
     aspect: "1 / 1",
     src: hvboxImg,
     // Tall object in a square tile reads small at the shared scale, so bump
