@@ -87,7 +87,7 @@ const projects: Project[] = [
     title: "Tesla",
     subtitle: "Battery & Energy Plastics",
     href: "/tesla",
-    tags: ["Injection Molding", "DFMA", "RCA"],
+    tags: ["DFM", "DFA", "Injection Molding", "RCA"],
     aspect: "16 / 9",
     // Logo JPG is tagged Display P3, so the browser color-manages its #CE3642
     // pixels to sRGB #E01D3C on screen. Match that here (not the raw pixel value)
@@ -109,7 +109,7 @@ const projects: Project[] = [
     title: "Triggerfish",
     subtitle: "Deep Sea ROV",
     href: "/deep-sea-rov",
-    tags: ["FDM + Resin 3D Printing", "Raspberry Pi"],
+    tags: ["FDM + Resin 3D Printing", "Arduino", "Raspberry Pi"],
     // ~square crop framing the ROV thruster render (object aspect 1.16).
     aspect: "6 / 5",
     src: rovImg,
@@ -124,7 +124,7 @@ const projects: Project[] = [
     title: "Carbon Fiber Undertray",
     subtitle: "Geometry Optimization",
     href: "/undertray",
-    tags: ["CFD", "Composite Mfg"],
+    tags: ["Creo", "Carbon Fiber Layups", "CFD"],
     aspect: "16 / 10",
     src: undertrayImg,
     // Larger than the shared default cap to fill more of the wide tile.
@@ -141,7 +141,7 @@ const projects: Project[] = [
     title: "Guccibot",
     subtitle: "Single-Input Planetary Walker",
     href: "/guccibot",
-    tags: ["CAD", "Mechanism Design"],
+    tags: ["Robotics Mechanisms", "Fusion 360"],
     aspect: "7 / 5",
     src: guccibotImg,
     alt: "Guccibot single-DOF input walking robot",
@@ -153,7 +153,7 @@ const projects: Project[] = [
     title: "Tally",
     subtitle: "Viral Social Accountability Platform",
     href: "/tally",
-    tags: ["Product Mgmt", "Product Design"],
+    tags: ["Product Design", "Product Mgmt", "UI/UX"],
     aspect: "16 / 9",
     background: "#161b2b",
     logo: (
@@ -172,7 +172,7 @@ const projects: Project[] = [
     title: "HV System Enclosure",
     subtitle: "Inverter Discharge & Energy Meter",
     href: "/hvbox",
-    tags: ["Electronics Packaging", "Sheet Metal Design"],
+    tags: ["Electronics Integration", "Creo", "Sheet Metal",],
     aspect: "1 / 1",
     src: hvboxImg,
     // Tall object in a square tile reads small at the shared scale, so bump
@@ -207,9 +207,9 @@ const projects: Project[] = [
     kind: "brand",
     col: 3,
     title: "IBM",
-    subtitle: "AI Enterprise Hardware",
+    subtitle: "Data & Production Automation",
     href: "/ibm",
-    tags: ["Python", "SQL", "Quality Mgmt"],
+    tags: ["SolidWorks", "Python", "SQL"],
     aspect: "16 / 9",
     // Image background is the same IBM blue, so it blends into the block
     // while letting us size the mark down from the full-bleed crop.
