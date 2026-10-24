@@ -19,9 +19,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
@@ -30,9 +30,17 @@ jobs:
 
       - run: npm run build
 
-      - uses: actions/configure-pages@v5
+      # GitHub Pages is a static host with no rewrite rules, so a direct hit on
+      # a client-side route (/about, /tesla) would 404. Serving the built app as
+      # the 404 page hands those URLs back to the router. Must be copied from the
+      # build output, not index.html at the repo root — the asset filenames are
+      # content-hashed at build time.
+      - name: SPA fallback for client-side routes
+        run: cp dist/index.html dist/404.html
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/configure-pages@v6
+
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: ./dist
 
@@ -44,4 +52,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
