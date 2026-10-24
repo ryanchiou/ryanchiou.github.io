@@ -1,0 +1,79 @@
+/* Watercolor corgi. Every layer shares the 588×579 canvas from
+   scripts/corgi-layers.py, so percentages below are canvas percentages (the
+   script prints each one). */
+
+.corgi {
+  --h: clamp(140px, 13vw, 196px);
+  position: relative;
+  width: calc(var(--h) * 588 / 579);
+  height: var(--h);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.corgi__art { position: absolute; inset: 0; pointer-events: none; }
+.corgi__art img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ── moving bits ───────────────────────────────────────── */
+.corgi__tail {
+  transform-origin: 78.32% 72.88%;
+  animation: corgi-wag .55s ease-in-out infinite alternate;
+}
+
+/* Panting: the open jaw and tongue stretch down from the upper lip and back. */
+.corgi__jaw {
+  transform-origin: 36.22% 37.74%;
+  animation: corgi-pant .42s ease-in-out infinite alternate;
+}
+
+.corgi__ear { transition: rotate .25s ease; }
+.corgi__ear--l { transform-origin: 29.42% 21.68%; }
+.corgi__ear--r { transform-origin: 54.17% 22.45%; }
+.corgi[data-flick="l"] .corgi__ear--l { animation: corgi-flick-l .36s ease-out; }
+.corgi[data-flick="r"] .corgi__ear--r { animation: corgi-flick-r .36s ease-out; }
+
+.corgi__eyes { opacity: 0; }
+.corgi[data-blink="true"] .corgi__eyes--blink,
+.corgi[data-happy="true"] .corgi__eyes--happy { opacity: 1; }
+.corgi[data-happy="true"] .corgi__eyes--blink { opacity: 0; }
+
+/* Hover: ears perk up and the tail picks up. Petted: full wag. */
+.corgi__hit:hover ~ .corgi__art .corgi__ear--l { rotate: 5deg; }
+.corgi__hit:hover ~ .corgi__art .corgi__ear--r { rotate: -5deg; }
+.corgi__hit:hover ~ .corgi__art .corgi__tail { animation-duration: .32s; }
+.corgi[data-happy="true"] .corgi__tail { animation-duration: .18s; }
+
+/* ── pettable area: the dog, not the ball or the grass ─── */
+.corgi__hit {
+  position: absolute;
+  z-index: 2;
+  inset: 3% 13% 7% 21%;
+  padding: 0;
+  border: 0;
+  border-radius: 45% 45% 30% 30%;
+  background: none;
+  cursor: pointer;
+}
+.corgi__hit:focus-visible { outline: 1px dashed var(--color-meta); outline-offset: 5px; }
+
+@keyframes corgi-wag {
+  from { transform: rotate(-7deg); }
+  to { transform: rotate(11deg); }
+}
+@keyframes corgi-pant {
+  from { transform: scaleY(1); }
+  to { transform: scaleY(1.09); }
+}
+@keyframes corgi-flick-l { 30% { transform: rotate(-9deg); } 65% { transform: rotate(3deg); } }
+@keyframes corgi-flick-r { 30% { transform: rotate(9deg); } 65% { transform: rotate(-3deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .corgi,
+  .corgi * { animation: none !important; transition: none !important; }
+}

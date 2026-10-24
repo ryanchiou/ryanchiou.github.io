@@ -1,16 +1,22 @@
 import type { ReactNode } from "react";
-import { Link } from "@/app/router";
+import { column } from "./layout";
+import { HvboxExplode } from "./HvboxExplode";
 import teslaLogo from "@/assets/tiles_corp/tesla_logo.jpg";
-import ibmLogo from "@/assets/tiles_corp/ibmlogo.jpg";
+import ibmLogo from "@/assets/tiles_corp/ibm_logo_blue.png";
 // Project photos are CAD renders on white, pre-cropped to the object's bounding
 // box with a uniform margin and centered (source padding was inconsistent
 // across exports), so a single on-tile scale makes the objects read at a
 // consistent size.
-import guccibotImg from "@/assets/tiles_proj/guccibot.png";
-import rovImg from "@/assets/tiles_proj/rov.png";
+import guccibotImg from "@/assets/tiles_proj/guccibot_walker.png";
+import flounderImg from "@/assets/tiles_proj/flounder_rov.png";
+import triggerfishImg from "@/assets/tiles_proj/triggerfish_rov.png";
 import hvboxImg from "@/assets/tiles_proj/hvbox.png";
 import tesseractImg from "@/assets/tiles_proj/tesseract.png";
 import undertrayImg from "@/assets/tiles_proj/undertray.png";
+import scanningRobotImg from "@/assets/tiles_proj/matlab_3D-scanning-robot.png";
+import coolingSleeveImg from "@/assets/tiles_proj/lattice_cooling-sleeve.png";
+import hydraImg from "@/assets/tiles_proj/hydra.png";
+import skinsImg from "@/assets/tiles_proj/skins.png";
 
 /* ── Project data ──────────────────────────────────────────────────
    The gallery is rendered straight from this array — add, remove, or
@@ -26,7 +32,8 @@ type BaseProject = {
   id: string;
   title: string;
   subtitle: string;
-  href: string;
+  /** The project's page. Omit until it exists; the card then renders unlinked. */
+  href?: string;
   /** CSS aspect-ratio for the image panel, e.g. "16 / 9". */
   aspect: string;
   /** Which of the three columns this tile lives in (placement is explicit). */
@@ -49,6 +56,8 @@ type PhotoProject = BaseProject & {
   alt: string;
   /** Max width/height of the centered art as a % of the tile (default 86). */
   scale?: number;
+  /** Shown in place of the still image, in the same footprint (e.g. an animated teardown). */
+  art?: ReactNode;
 };
 
 /* Reserved slot for a project that isn't built yet. Renders non-interactive
@@ -67,17 +76,12 @@ type PlaceholderProject = {
 
 type Project = BrandProject | PhotoProject | PlaceholderProject;
 
-/* Wordmark tiles (tally, Skins): the mark grows with the viewport up to the
-   1512px design size (36px), holds there, then resumes scaling past it so it
-   keeps pace with the tile on wide screens. */
-const markSize = "text-[clamp(20px,min(4.2vw,max(36px,2.38vw)),52px)]";
-
 // Placement is explicit: each tile names its column, and the gallery renders
 // three independent columns (no auto-balancing). Reading left→right, top→bottom
-// the tiles number 1..9:
-//   Col 1: Tesla (1) / Triggerfish (4) / Carbon Fiber Undertray (7)
-//   Col 2: Guccibot (2) / Tally (5) / HV Electronics Packaging (8)
-//   Col 3: Skins (3) / IBM (6) / Tesseract (9)
+// the tiles number 1..13:
+//   Col 1: Tesla (1) / HV Electronics Packaging (4) / Tesseract (7) / Carbon Fiber Undertray (10)
+//   Col 2: 3D Scanning Robotic Arm (2) / Guccibot (5) / Tally (8) / Triggerfish (11)
+//   Col 3: Actuator Cooling Sleeve (3) / IBM (6) / Skins (9) / Project Hydra (12) / Flounder (13)
 const projects: Project[] = [
   // ── Column 1 ────────────────────────────────────────────────────────────
   {
@@ -86,8 +90,7 @@ const projects: Project[] = [
     col: 1,
     title: "Tesla",
     subtitle: "Battery & Energy Plastics",
-    href: "/tesla",
-    tags: ["DFM", "DFA", "Injection Molding", "RCA"],
+    tags: ["Injection Molding", "DFMA", "RCA"],
     aspect: "16 / 9",
     // Logo JPG is tagged Display P3, so the browser color-manages its #CE3642
     // pixels to sRGB #E01D3C on screen. Match that here (not the raw pixel value)
@@ -102,29 +105,48 @@ const projects: Project[] = [
       />
     ),
   },
+  // HV Electronics Packaging (tile 4). Shortened from 3/4 to 1/1; the tall
+  // exploded stack (object aspect ~0.75) still fits by height, centered, with
+  // white margins on the sides.
   {
-    id: "rov-1",
+    id: "hvbox",
     kind: "photo",
     col: 1,
-    title: "Triggerfish",
-    subtitle: "Deep Sea ROV",
-    href: "/deep-sea-rov",
-    tags: ["FDM + Resin 3D Printing", "Arduino", "Raspberry Pi"],
-    // ~square crop framing the ROV thruster render (object aspect 1.16).
-    aspect: "6 / 5",
-    src: rovImg,
-    alt: "Deep sea ROV thruster assembly, mechanical design",
+    title: "HV System Enclosure",
+    subtitle: "Inverter Discharge & Energy Meter",
+    tags: ["Electronics Packaging", "Sheet Metal Design"],
+    aspect: "1 / 1",
+    src: hvboxImg,
+    // Tall object in a square tile reads small at the shared scale, so bump
+    // this tile up.
+    scale: 85,
+    alt: "High-voltage electronics packaging exploded assembly",
+    // Rests assembled and explodes into the render above on hover.
+    art: <HvboxExplode alt="High-voltage electronics packaging, assembled and exploded" />,
   },
-  // Carbon Fiber Undertray (tile 7). Object is very wide (~3.3), so it frames
+  {
+    id: "tesseract",
+    kind: "photo",
+    col: 1,
+    title: "Tesseract",
+    subtitle: "Sub-7 Liter PC",
+    tags: ["Computer Hardware", "Cooling Optimization"],
+    // Short landscape tile, a touch taller than the 16/9 & 16/10 neighbours.
+    aspect: "4 / 3",
+    src: tesseractImg,
+    // Matches the shared default cap.
+    scale: 65,
+    alt: "Tesseract sub-7-liter PC build, hardware assembly",
+  },
+  // Carbon Fiber Undertray (tile 10). Object is very wide (~3.3), so it frames
   // as a horizontal band with white margins above/below in this landscape tile.
   {
     id: "undertray",
     kind: "photo",
     col: 1,
     title: "Carbon Fiber Undertray",
-    subtitle: "Geometry Optimization",
-    href: "/undertray",
-    tags: ["Creo", "Carbon Fiber Layups", "CFD"],
+    subtitle: "Airfoil Downforce Optimization",
+    tags: ["CFD", "Composite Mfg"],
     aspect: "16 / 10",
     src: undertrayImg,
     // Larger than the shared default cap to fill more of the wide tile.
@@ -132,16 +154,29 @@ const projects: Project[] = [
     alt: "Carbon fiber undertray geometry optimization study",
   },
   // ── Column 2 ────────────────────────────────────────────────────────────
-  // Guccibot (tile 2). Tile aspect ~matches the trimmed object (1.42) so it
+  // 3D Scanning Robotic Arm (tile 2). MATLAB plot of the arm's frames and scan
+  // volume; tile aspect ~matches the trimmed figure (1.21). The figure is thin
+  // lines on lots of white, so it gets a larger cap than the solid renders.
+  {
+    id: "scanning-robot",
+    kind: "photo",
+    col: 2,
+    title: "3D Scanning Robotic Arm",
+    subtitle: "Robotics & 3D Reconstruction",
+    aspect: "6 / 5",
+    src: scanningRobotImg,
+    scale: 90,
+    alt: "Robotic arm kinematics plot with coordinate frames around a 3D scanning volume",
+  },
+  // Guccibot (tile 5). Tile aspect ~matches the trimmed object (1.42) so it
   // frames tightly.
   {
     id: "guccibot",
     kind: "photo",
     col: 2,
     title: "Guccibot",
-    subtitle: "Single-Input Planetary Walker",
-    href: "/guccibot",
-    tags: ["Robotics Mechanisms", "Fusion 360"],
+    subtitle: "Single-Input 8-Legged Robot",
+    tags: ["CAD", "Mechanism Design"],
     aspect: "7 / 5",
     src: guccibotImg,
     alt: "Guccibot single-DOF input walking robot",
@@ -152,55 +187,41 @@ const projects: Project[] = [
     col: 2,
     title: "Tally",
     subtitle: "Viral Social Accountability Platform",
-    href: "/tally",
-    tags: ["Product Design", "Product Mgmt", "UI/UX"],
+    tags: ["Product Mgmt", "Product Design"],
     aspect: "16 / 9",
     background: "#161b2b",
     logo: (
-      <span className={`font-garamond ${markSize} leading-none text-white`}>
+      <span className="font-garamond text-[clamp(20px,4.2vw,36px)] leading-none text-white">
         tally.
       </span>
     ),
   },
-  // HV Electronics Packaging (tile 8). Shortened from 3/4 to 1/1; the tall
-  // exploded stack (object aspect ~0.75) still fits by height, centered, with
-  // white margins on the sides.
+  // Triggerfish (tile 11). The latest high-school ROV (object aspect 1.24,
+  // including its ground shadow). Shorter 4/3 tile; scale 70 keeps the render
+  // ~65% of the tile width.
   {
-    id: "hvbox",
+    id: "triggerfish",
     kind: "photo",
     col: 2,
-    title: "HV System Enclosure",
-    subtitle: "Inverter Discharge & Energy Meter",
-    href: "/hvbox",
-    tags: ["Electronics Integration", "Creo", "Sheet Metal",],
-    aspect: "1 / 1",
-    src: hvboxImg,
-    // Tall object in a square tile reads small at the shared scale, so bump
-    // this tile up.
-    scale: 85,
-    alt: "High-voltage electronics packaging exploded assembly",
+    title: "Triggerfish",
+    subtitle: "Deep Sea ROV",
+    aspect: "4 / 3",
+    src: triggerfishImg,
+    scale: 70,
+    alt: "Triggerfish deep sea ROV with thrusters, camera dome and gripper arm",
   },
   // ── Column 3 ────────────────────────────────────────────────────────────
+  // Actuator Cooling Sleeve (tile 3). Wide lattice ring (object aspect 1.61)
+  // in a matching landscape tile.
   {
-    id: "skins",
-    kind: "brand",
+    id: "cooling-sleeve",
+    kind: "photo",
     col: 3,
-    title: "Skins",
-    subtitle: "Personalized Skin Care App",
-    href: "/skins",
-    tags: ["UI/UX", "Swift", "Figma"],
+    title: "Actuator Cooling Sleeve",
+    subtitle: "Actuator Manufacturing Integration",
     aspect: "16 / 10",
-    // Figma spec: horizontal linear gradient, 5 evenly-spaced stops
-    // (0/25/50/75/100%). Each stop carries an opacity (0/50/75/88/100%) and
-    // is overlaid on a white backsplash — so we paint the rgba stops as the
-    // top layer and stack a solid white base beneath to composite correctly.
-    background:
-      "linear-gradient(to right, rgba(255,231,209,0) 0%, rgba(230,188,152,0.5) 25%, rgba(212,170,120,0.75) 50%, rgba(161,110,75,0.88) 75%, rgba(104,70,57,1) 100%), #FFFFFF",
-    logo: (
-      <span className={`font-cal ${markSize} leading-none text-white`}>
-        Skins
-      </span>
-    ),
+    src: coolingSleeveImg,
+    alt: "Gyroid lattice cooling sleeve for an actuator",
   },
   {
     id: "ibm",
@@ -208,40 +229,66 @@ const projects: Project[] = [
     col: 3,
     title: "IBM",
     subtitle: "Data & Production Automation",
-    href: "/ibm",
-    tags: ["SolidWorks", "Python", "SQL"],
+    tags: ["Python", "SQL", "Quality Mgmt"],
     aspect: "16 / 9",
-    // Image background is the same IBM blue, so it blends into the block
-    // while letting us size the mark down from the full-bleed crop.
-    background: "#0F62FE",
+    // Blue 8-bar mark (transparent PNG, trimmed to the mark) on white.
+    background: "#FFFFFF",
     logo: (
       <img
         src={ibmLogo}
         alt="IBM logo"
         draggable={false}
-        className="w-[40%] select-none"
+        className="w-[31%] select-none"
       />
     ),
   },
+  // Skins. Phone mockup of the app's home dashboard. Very tall object (aspect
+  // ~0.56), so like the HV enclosure it sits in a square tile with a larger cap.
   {
-    id: "tesseract",
+    id: "skins",
     kind: "photo",
     col: 3,
-    title: "Tesseract",
-    subtitle: "Sub-7 Liter PC",
-    href: "/tesseract",
-    tags: ["Computer Hardware", "Cooling Optimization"],
-    // Short landscape tile, a touch taller than the 16/9 & 16/10 neighbours.
-    aspect: "4 / 3",
-    src: tesseractImg,
-    // Matches the shared default cap.
-    scale: 65,
-    alt: "Tesseract sub-7-liter PC build, hardware assembly",
+    title: "Skins",
+    subtitle: "AI Skincare Assistant",
+    tags: ["UI/UX", "Swift", "Figma"],
+    aspect: "1 / 1",
+    src: skinsImg,
+    scale: 85,
+    alt: "Skins app home screen on a phone, showing a skin health score with hydration, texture and tone",
+  },
+  // Project Hydra (tile 12). Product photo, not a CAD render, near-square
+  // (aspect 1.05). The tile is a touch shorter than square; scale 70 keeps the
+  // photo ~65% of the tile width, as large as the other renders.
+  {
+    id: "hydra",
+    kind: "photo",
+    col: 3,
+    title: "Project Hydra",
+    subtitle: "Liquid-Cooled ITX System",
+    aspect: "9 / 8",
+    src: hydraImg,
+    scale: 70,
+    alt: "Project Hydra liquid-cooled mini-ITX PC with custom water-cooling loop",
+  },
+  // Flounder (tile 13).
+  {
+    id: "flounder",
+    kind: "photo",
+    col: 3,
+    title: "Flounder",
+    subtitle: "Deep Sea ROV",
+    tags: ["FDM + Resin 3D Printing", "Raspberry Pi"],
+    // ~square crop framing the ROV thruster render (object aspect 1.16).
+    aspect: "6 / 5",
+    src: flounderImg,
+    alt: "Flounder deep sea ROV thruster assembly, mechanical design",
   },
 ];
 
+// The inset hairline keeps the pure-white CAD tiles (and Skins' white edge)
+// crisp against the paper; on the brand colors it's all but invisible.
 const panelClass =
-  "relative flex h-full w-full items-center justify-center overflow-hidden rounded-sm";
+  "relative flex h-full w-full items-center justify-center overflow-hidden rounded-sm ring-1 ring-inset ring-ink/8";
 
 /* A CAD render centered on a white tile. The art is trimmed to its object, so
    `scale` (a % cap on both width and height, via object-contain) directly sets
@@ -252,21 +299,32 @@ function CenteredArt({
   alt,
   scale = 65,
   tags,
+  art,
 }: {
   src: string;
   alt: string;
   scale?: number;
   tags?: string[];
+  art?: ReactNode;
 }) {
   return (
     <div className={`${panelClass} bg-white`}>
-      <img
-        src={src}
-        alt={alt}
-        draggable={false}
-        style={{ maxWidth: `${scale}%`, maxHeight: `${scale}%` }}
-        className="select-none object-contain"
-      />
+      {art ? (
+        <div
+          className="flex h-full w-full items-center justify-center"
+          style={{ maxWidth: `${scale}%`, maxHeight: `${scale}%` }}
+        >
+          {art}
+        </div>
+      ) : (
+        <img
+          src={src}
+          alt={alt}
+          draggable={false}
+          style={{ maxWidth: `${scale}%`, maxHeight: `${scale}%` }}
+          className="select-none object-contain"
+        />
+      )}
       <CardOverlay />
       <TileTags tags={tags} />
     </div>
@@ -291,6 +349,7 @@ function ProjectPanel({ project }: { project: BrandProject | PhotoProject }) {
         alt={project.alt}
         scale={project.scale}
         tags={project.tags}
+        art={project.art}
       />
     );
   }
@@ -298,7 +357,7 @@ function ProjectPanel({ project }: { project: BrandProject | PhotoProject }) {
   // Placeholder panel until a real product photo is wired in.
   return (
     <div className={`${panelClass} bg-white`}>
-      <span aria-hidden className="font-roboto font-medium text-[clamp(15px,0.99vw,21px)] text-black/20">
+      <span aria-hidden className="font-roboto font-medium text-[15px] text-black/20">
         {project.title}
       </span>
       <CardOverlay />
@@ -325,7 +384,7 @@ function TileTags({ tags }: { tags?: string[] }) {
       {tags.map((tag) => (
         <span
           key={tag}
-          className="rounded-sm bg-white px-3 py-1.5 font-mono text-[clamp(12px,0.79vw,17px)] leading-none text-black shadow-sm"
+          className="rounded-sm bg-white px-3 py-1.5 font-mono text-[12px] leading-none text-black shadow-sm"
         >
           {tag}
         </span>
@@ -345,39 +404,42 @@ function ProjectCard({ project }: { project: Project }) {
           {project.src ? (
             <CenteredArt src={project.src} alt={project.alt ?? ""} scale={project.scale} />
           ) : (
-            <div className="h-full w-full rounded-sm bg-white" />
+            <div className="h-full w-full rounded-sm bg-white ring-1 ring-inset ring-ink/8" />
           )}
         </div>
       </div>
     );
   }
 
-  return (
-    <Link
-      to={project.href}
-      className="group block cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
-    >
-      {/* Interactive shrink — the panel eases down to 96% under the cursor and
-          springs back to full size on leave. transform-gpu keeps the scale on
-          the compositor so the tile stays crisp; the caption below is untouched. */}
-      <div
-        className="w-full transform-gpu transition-transform duration-300 ease-out will-change-transform group-hover:scale-[0.96]"
-        style={{ aspectRatio: project.aspect }}
-      >
+  const card = (
+    <>
+      <div className="w-full" style={{ aspectRatio: project.aspect }}>
         <ProjectPanel project={project} />
       </div>
 
       {/* Caption — left-aligned, directly below the panel. Title in
           Roboto (matches the nav); subtitle in Magda mono. */}
       <div className="pt-3">
-        <h3 className="font-roboto font-medium text-[clamp(17px,1.12vw,24px)] tracking-wide leading-tight text-white">
+        <h3 className="font-roboto font-medium text-[17px] tracking-wide leading-tight text-ink">
           {project.title}
         </h3>
-        <p className="mt-1.5 font-mono text-[clamp(13px,0.86vw,18px)] leading-snug text-meta">
+        <p className="mt-1.5 font-mono text-[13px] leading-snug text-meta">
           {project.subtitle}
         </p>
       </div>
-    </Link>
+    </>
+  );
+
+  // No page yet: same card and hover, just not a link.
+  if (!project.href) return <div className="group">{card}</div>;
+
+  return (
+    <a
+      href={project.href}
+      className="group block cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40"
+    >
+      {card}
+    </a>
   );
 }
 
@@ -386,14 +448,14 @@ export function ProjectGallery() {
     <section
       id="projects"
       data-name="Projects"
-      className="w-full bg-panel px-[7.5%] pb-32 pt-4 sm:px-[9.5%] lg:px-[11.25%]"
+      className={`${column} pb-32 pt-10`}
     >
       {/* Explicit columns: each column is an independent top-aligned stack, so
           tiles land exactly where assigned and differing heights stagger the
           columns. Stacks to one column below lg. */}
-      <div className="flex flex-col gap-[clamp(12px,0.79vw,20px)] lg:flex-row lg:items-start">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start">
         {([1, 2, 3] as const).map((col) => (
-          <div key={col} className="flex flex-1 flex-col gap-[clamp(12px,0.79vw,20px)]">
+          <div key={col} className="flex flex-1 flex-col gap-3">
             {projects
               .filter((project) => project.col === col)
               .map((project) => (
