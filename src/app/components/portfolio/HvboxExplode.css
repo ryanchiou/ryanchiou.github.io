@@ -1,0 +1,55 @@
+/* HV enclosure explode. Each part rests at its assembled offset (--ax/--ay,
+   a % of its own box) and slides to 0 when exploded; the stage zooms out a
+   touch at the same time. Timings mirror a real teardown: the lid lifts and the
+   tray drops first, the front connectors and internals follow, and the reverse
+   on the way back. */
+
+.hvx {
+  position: relative;
+  height: 100%;
+  max-width: 100%;
+}
+
+.hvx__stage {
+  position: absolute;
+  inset: 0;
+  transform: scale(var(--rest-zoom)) translateY(var(--rest-shift));
+  transition: transform 560ms cubic-bezier(.65, 0, .35, 1) 80ms;
+}
+
+.hvx__part {
+  position: absolute;
+  max-width: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  transform: translate(var(--ax), var(--ay));
+  /* collapsing (hover out) */
+  transition: transform var(--out-dur) cubic-bezier(.65, 0, .35, 1) var(--out-delay);
+}
+
+.hvx__part[data-group="lid"] { --in-delay: 0ms; --in-dur: 640ms; --out-delay: 120ms; --out-dur: 520ms; }
+.hvx__part[data-group="tray"] { --in-delay: 0ms; --in-dur: 520ms; --out-delay: 120ms; --out-dur: 440ms; }
+.hvx__part[data-group="fc"] { --in-delay: 80ms; --in-dur: 560ms; --out-delay: 40ms; --out-dur: 460ms; }
+.hvx__part[data-group="int"] { --in-delay: 140ms; --in-dur: 600ms; --out-delay: 0ms; --out-dur: 460ms; }
+.hvx__part[data-group="box"] { --in-delay: 0ms; --in-dur: 0ms; --out-delay: 0ms; --out-dur: 0ms; }
+
+/* exploded: card hovered or keyboard-focused, or scrolled into view on touch */
+:is(.group:hover, .group:focus-visible) .hvx__stage,
+.hvx[data-exploded="true"] .hvx__stage {
+  transform: none;
+  transition: transform 700ms cubic-bezier(.22, 1, .36, 1);
+}
+:is(.group:hover, .group:focus-visible) .hvx__part,
+.hvx[data-exploded="true"] .hvx__part {
+  transform: none;
+  transition: transform var(--in-dur) cubic-bezier(.22, 1, .36, 1) var(--in-delay);
+}
+
+/* No motion: show the exploded render as a still. */
+@media (prefers-reduced-motion: reduce) {
+  .hvx__stage,
+  .hvx__part {
+    transform: none !important;
+    transition: none !important;
+  }
+}

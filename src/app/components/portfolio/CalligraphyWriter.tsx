@@ -42,6 +42,9 @@ type Props = {
 };
 
 /**
+ * Not rendered anywhere right now: it was taken out of the hero, but stays in
+ * the codebase until the portfolio is finished.
+ *
  * Renders the name as three stacked hanzi-writer SVGs and, on first mount,
  * animates each character stroke-by-stroke in reading order. Character size is
  * derived from the root's height (height / 3, square cells) so it slots into the
@@ -71,6 +74,11 @@ export function CalligraphyWriter({ className }: Props) {
     if (!size) return;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Strokes take the inherited text color (the page ink). Computed colors
+    // serialize as rgb(), which hanzi-writer can parse.
+    const strokeColor = rootRef.current
+      ? getComputedStyle(rootRef.current).color
+      : "#000000";
     const writers = CHARS.map(({ char, data }, i) => {
       const target = targetRefs.current[i];
       if (!target) return null;
@@ -81,7 +89,7 @@ export function CalligraphyWriter({ className }: Props) {
         padding: Math.round(size * 0.05),
         showCharacter: false,
         showOutline: false,
-        strokeColor: "#ffffff",
+        strokeColor,
         strokeAnimationSpeed: 1.3, // 1.5× the previous 0.85
         delayBetweenStrokes: 87,
         charDataLoader: () => data as never,

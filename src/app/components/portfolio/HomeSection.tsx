@@ -1,59 +1,35 @@
-import { CalligraphyWriter } from "./CalligraphyWriter";
-
-const metaRows = [
-  { label: "Location:", value: "san francisco bay area" },
-  { label: "Current:", value: "b.s. mechanical engineering @ uiuc" },
-];
+import { CorgiHero } from "./CorgiHero";
+import { column } from "./layout";
 
 export function HomeSection() {
   return (
     <section
       id="home"
       data-name="Home"
-      className="relative flex min-h-[92vh] w-full flex-col bg-panel px-[8%] py-10 sm:px-[10%] lg:px-[12%]"
+      className={`${column} flex min-h-[77vh] flex-col justify-center pb-12 pt-32 lg:pt-50`}
     >
-      {/* Nav lives in the fixed ScrollNav; the hero only holds the name block. */}
+      {/* Nav lives in the fixed ScrollNav. The hero is a one-sentence intro over
+          a one-line subtitle, with the corgi on the right (desktop) or above
+          the text (tablet and phone). The min height holds the gallery down
+          toward the bottom of the first screen, and the content is centered in
+          the space between the nav and the gallery. */}
+      <div className="flex flex-col-reverse gap-10 lg:flex-row lg:items-end lg:justify-between lg:gap-16">
+        <div className="min-w-0 lg:max-w-[720px]">
+          <h1 className="text-balance font-serif text-[clamp(32px,3.4vw,48px)] font-normal leading-[1.25] tracking-[-0.03em] text-ink">
+            Ryan Chiou is a mechanical design engineer.
+          </h1>
 
-      {/* Hero row — anchored toward the bottom */}
-      <div className="flex flex-1 items-end pb-[18vh]">
-        {/* The content block is the only in-flow child, so it defines the row's
-            height. The calligraphy is absolutely positioned (top-0/bottom-0) so
-            its height equals that block exactly, and the image derives its own
-            width from its natural 1:3 ratio. */}
-        <div className="relative w-full">
-          {/* Content block — the Le-Labo-style self-describing label */}
-          <div className="max-w-[640px]">
-            <h1 className="font-display text-[48px] font-bold leading-none text-white max-[600px]:text-[32px]">
-              Ryan Chiou
-            </h1>
-            <p className="mt-5 font-mono text-[14px] uppercase tracking-[0.18em] text-meta">
-              Mechanical Engineer / Designer
-            </p>
-            <p className="mt-3 font-mono text-[14px] tracking-[0.1em] text-meta-bright">
-              IBM / Tesla / tally
-            </p>
+          <p className="mt-6 font-mono text-[14px] text-ink">
+            MechE @ UIUC <span className="mx-1.5 text-meta">/</span> Prev. Tesla, IBM
+          </p>
+        </div>
 
-            <dl className="mt-10 space-y-3">
-              {metaRows.map(({ label, value }) => (
-                <div key={label} className="flex items-baseline gap-x-5">
-                  <dt className="w-[80px] shrink-0 font-condensed font-medium text-[16px] tracking-wide text-white sm:w-[92px]">
-                    {label}
-                  </dt>
-                  <dd className="min-w-0 font-mono text-[13px] lowercase text-meta sm:text-[14px]">
-                    {value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-
-          {/* Calligraphy 邱永建 — height matched to the content block (desktop) */}
-          <CalligraphyWriter className="absolute bottom-0 right-0 top-0 hidden flex-col items-end justify-center select-none md:flex" />
+        {/* On desktop the row is bottom-aligned, so the corgi sits on the
+            subtitle's baseline. */}
+        <div className="shrink-0">
+          <CorgiHero />
         </div>
       </div>
-
-      {/* Calligraphy — scaled down, centered below content (mobile) */}
-      <CalligraphyWriter className="mb-[6vh] flex h-[220px] flex-col items-center justify-center select-none md:hidden" />
     </section>
   );
 }

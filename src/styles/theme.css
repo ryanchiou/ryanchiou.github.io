@@ -121,13 +121,14 @@
 }
 
 /* ── Hero / editorial system tokens ───────────────────────────────
-   Le-Labo-inspired apothecary aesthetic.
-   - display  : Roboto Condensed — name header (bold)
-   - condensed: Roboto Condensed — Location/Current label keys (medium)
+   - serif    : Libre Baskerville — hero headline sentence
+   - display  : Roboto Condensed — display text (bold)
+   - condensed: Roboto Condensed — hero meta labels (medium)
    - roboto   : Roboto           — navbar + gallery tile headers (medium)
    - mono     : Magda Clean Mono — metadata values
    These are shared with the later three-column project gallery. */
 @theme {
+  --font-serif: 'Libre Baskerville', Georgia, serif;
   --font-display: 'Roboto Condensed', 'Arial Narrow', sans-serif;
   --font-condensed: 'Roboto Condensed', 'Arial Narrow', sans-serif;
   --font-roboto: 'Roboto', system-ui, sans-serif;
@@ -135,11 +136,16 @@
   --font-garamond: 'EB Garamond', Georgia, serif;
   --font-mono: 'Magda Clean Mono', ui-monospace, SFMono-Regular, monospace;
 
-  --color-frame: #1a1a1a;        /* near-black outer frame */
-  --color-panel: #000000;        /* pure black */
-  --color-meta: #8a8a8a;         /* secondary metadata */
-  --color-meta-bright: #b8b8b8;  /* slightly brighter metadata */
-  --color-accent-blue: #1a4fff;  /* electric blue — active nav only */
+  /* Light palette. The page is the flat tone rachelchen.tech's grain texture
+     averages to (minus the grain), just dark enough that the pure-white CAD
+     tiles read as prints laid on it. The ink is drawn from the corgi's
+     brown-black outline. Keep these hex or rgb, since CalligraphyWriter hands
+     the inherited ink color to hanzi-writer. */
+  --color-paper: #f5f5f5;        /* page */
+  --color-ink: #2a2420;          /* text, calligraphy */
+  --color-meta: #6f6962;         /* secondary metadata (4.9:1 on paper) */
+  --color-meta-bright: #4a443f;  /* stronger metadata */
+  --color-accent-blue: #1a4fff;  /* electric blue — nav hover/current */
 }
 
 @layer base {
@@ -149,12 +155,12 @@
 
   html {
     scroll-behavior: auto; /* instant scroll for high-refresh displays */
+    color-scheme: light;
   }
 
   body {
-    @apply bg-black text-foreground;
+    @apply bg-paper text-ink;
     font-family: var(--font-sans);
-    cursor: none;
   }
 
   /**

@@ -1,0 +1,154 @@
+{
+ "canvas": [
+  705,
+  935
+ ],
+ "layers": [
+  {
+   "name": "tray",
+   "group": "tray",
+   "left": 13.333,
+   "top": 74.439,
+   "width": 67.376,
+   "height": 20.214,
+   "ax": 0.0,
+   "ay": -55.026
+  },
+  {
+   "name": "int",
+   "group": "int",
+   "left": 15.603,
+   "top": 39.144,
+   "width": 57.872,
+   "height": 30.16,
+   "ax": 0.0,
+   "ay": 25.816
+  },
+  {
+   "name": "int_bracket",
+   "group": "int",
+   "left": 65.816,
+   "top": 44.492,
+   "width": 13.617,
+   "height": 9.519,
+   "ax": 0.0,
+   "ay": 58.427
+  },
+  {
+   "name": "int_heat",
+   "group": "int",
+   "left": 74.752,
+   "top": 34.866,
+   "width": 19.858,
+   "height": 14.439,
+   "ax": -71.964,
+   "ay": 76.074
+  },
+  {
+   "name": "fcl_rear",
+   "group": "fc",
+   "left": 40.0,
+   "top": 56.791,
+   "width": 7.801,
+   "height": 3.957,
+   "ax": -3.545,
+   "ay": 293.378
+  },
+  {
+   "name": "fcc_rear",
+   "group": "fc",
+   "left": 31.348,
+   "top": 58.396,
+   "width": 5.248,
+   "height": 6.738,
+   "ax": 50.946,
+   "ay": 209.444
+  },
+  {
+   "name": "box",
+   "group": "box",
+   "left": 13.191,
+   "top": 57.861,
+   "width": 66.95,
+   "height": 25.455,
+   "ax": 0.0,
+   "ay": 0.0
+  },
+  {
+   "name": "fcl",
+   "group": "fc",
+   "left": 42.128,
+   "top": 56.791,
+   "width": 15.745,
+   "height": 10.588,
+   "ax": -1.757,
+   "ay": 109.646
+  },
+  {
+   "name": "fcr",
+   "group": "fc",
+   "left": 64.823,
+   "top": 51.016,
+   "width": 15.319,
+   "height": 11.23,
+   "ax": -1.806,
+   "ay": 103.381
+  },
+  {
+   "name": "fcc",
+   "group": "fc",
+   "left": 35.603,
+   "top": 58.289,
+   "width": 5.106,
+   "height": 6.845,
+   "ax": 52.361,
+   "ay": 206.172
+  },
+  {
+   "name": "bc_tabs",
+   "group": "lid",
+   "left": 40.567,
+   "top": 27.273,
+   "width": 27.66,
+   "height": 7.914,
+   "ax": 0.0,
+   "ay": 350.473
+  },
+  {
+   "name": "lid",
+   "group": "lid",
+   "left": 5.39,
+   "top": 24.813,
+   "width": 89.22,
+   "height": 27.059,
+   "ax": 0.0,
+   "ay": 75.791
+  },
+  {
+   "name": "bc",
+   "group": "lid",
+   "left": 34.468,
+   "top": 5.348,
+   "width": 44.113,
+   "height": 25.775,
+   "ax": 0.0,
+   "ay": 107.614
+  },
+  {
+   "name": "lc",
+   "group": "lid",
+   "left": 11.064,
+   "top": 18.503,
+   "width": 33.475,
+   "height": 21.925,
+   "ax": 0.0,
+   "ay": 120.171
+  }
+ ],
+ "assembled": {
+  "left": 5.346,
+  "top": 33.079,
+  "width": 89.309,
+  "height": 50.382
+ }
+}

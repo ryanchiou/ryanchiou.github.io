@@ -4,10 +4,13 @@ import EmailIcon from "@mui/icons-material/Email";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import XIcon from "@mui/icons-material/X";
 
+// In page order. "#" links scroll to their section and ScrollNav highlights the
+// one in view; any other href opens in a new tab. The resume is served from
+// public/Ryan_Chiou_Resume.pdf.
 export const navItems = [
-  { label: "Projects", href: "#projects", active: true },
-  { label: "About", href: "#about", active: false },
-  { label: "Resume", href: "#resume", active: false },
+  { label: "Projects", href: "#projects" },
+  { label: "About", href: "#about" },
+  { label: "Resume", href: "/Ryan_Chiou_Resume.pdf" },
 ];
 
 type SocialLink = {
