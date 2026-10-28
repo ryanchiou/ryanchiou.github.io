@@ -13,7 +13,7 @@ import triggerfishImg from "@/assets/tiles_proj/triggerfish_rov.png";
 import hvboxImg from "@/assets/tiles_proj/hvbox.png";
 import tesseractImg from "@/assets/tiles_proj/tesseract.png";
 import undertrayImg from "@/assets/tiles_proj/undertray.png";
-import scanningRobotImg from "@/assets/tiles_proj/matlab_3D-scanning-robot.png";
+import scanningRobotImg from "@/assets/tiles_proj/3D-scanning_robotic-arm.png";
 import coolingSleeveImg from "@/assets/tiles_proj/lattice_cooling-sleeve.png";
 import hydraImg from "@/assets/tiles_proj/hydra.png";
 import skinsImg from "@/assets/tiles_proj/skins.png";
@@ -113,7 +113,7 @@ const projects: Project[] = [
     kind: "photo",
     col: 1,
     title: "HV System Enclosure",
-    subtitle: "Inverter Discharge & Energy Meter",
+    subtitle: "Sensor Integration",
     tags: ["Electronics Packaging", "Sheet Metal Design"],
     aspect: "1 / 1",
     src: hvboxImg,
@@ -145,7 +145,7 @@ const projects: Project[] = [
     kind: "photo",
     col: 1,
     title: "Carbon Fiber Undertray",
-    subtitle: "Airfoil Downforce Optimization",
+    subtitle: "Airfoil Optimization",
     tags: ["CFD", "Composite Mfg"],
     aspect: "16 / 10",
     src: undertrayImg,
@@ -154,19 +154,19 @@ const projects: Project[] = [
     alt: "Carbon fiber undertray geometry optimization study",
   },
   // ── Column 2 ────────────────────────────────────────────────────────────
-  // 3D Scanning Robotic Arm (tile 2). MATLAB plot of the arm's frames and scan
-  // volume; tile aspect ~matches the trimmed figure (1.21). The figure is thin
-  // lines on lots of white, so it gets a larger cap than the solid renders.
+  // 3D Scanning Robotic Arm (tile 2). CAD render of the arm; the object is a
+  // touch taller than wide (aspect 0.90), so in this landscape tile it fits by
+  // height and gets the larger cap to read as wide as the other renders.
   {
     id: "scanning-robot",
     kind: "photo",
     col: 2,
     title: "3D Scanning Robotic Arm",
-    subtitle: "Robotics & 3D Reconstruction",
+    subtitle: "3D Reconstruction",
     aspect: "6 / 5",
     src: scanningRobotImg,
-    scale: 90,
-    alt: "Robotic arm kinematics plot with coordinate frames around a 3D scanning volume",
+    scale: 85,
+    alt: "Robotic arm with a 3D scanner mounted on its end effector",
   },
   // Guccibot (tile 5). Tile aspect ~matches the trimmed object (1.42) so it
   // frames tightly.
@@ -174,9 +174,9 @@ const projects: Project[] = [
     id: "guccibot",
     kind: "photo",
     col: 2,
-    title: "Guccibot",
-    subtitle: "Single-Input 8-Legged Robot",
-    tags: ["CAD", "Mechanism Design"],
+    title: "Single-Input 8-Legged Robot",
+    subtitle: "Mechanisms",
+    tags: ["CAD", "Mechanisms"],
     aspect: "7 / 5",
     src: guccibotImg,
     alt: "Guccibot single-DOF input walking robot",
@@ -218,7 +218,7 @@ const projects: Project[] = [
     kind: "photo",
     col: 3,
     title: "Actuator Cooling Sleeve",
-    subtitle: "Actuator Manufacturing Integration",
+    subtitle: "Additive Manufacturing",
     aspect: "16 / 10",
     src: coolingSleeveImg,
     alt: "Gyroid lattice cooling sleeve for an actuator",
@@ -264,7 +264,7 @@ const projects: Project[] = [
     kind: "photo",
     col: 3,
     title: "Project Hydra",
-    subtitle: "Liquid-Cooled ITX System",
+    subtitle: "Liquid-Cooled ITX PC",
     aspect: "9 / 8",
     src: hydraImg,
     scale: 70,
@@ -357,7 +357,7 @@ function ProjectPanel({ project }: { project: BrandProject | PhotoProject }) {
   // Placeholder panel until a real product photo is wired in.
   return (
     <div className={`${panelClass} bg-white`}>
-      <span aria-hidden className="font-roboto font-medium text-[15px] text-black/20">
+      <span aria-hidden className="font-sans font-medium text-[15px] text-ink/20">
         {project.title}
       </span>
       <CardOverlay />
@@ -375,7 +375,7 @@ function CardOverlay() {
 
 /* Skill chips — small white boxes pinned to the panel's bottom-left, one per
    tag. Hidden until the card is hovered, then fade in over the darken layer.
-   Magda mono to match the captions. Sits above CardOverlay in the DOM so the
+   Inter, like the captions. Sits above CardOverlay in the DOM so the
    boxes stay bright against the dimmed art. */
 function TileTags({ tags }: { tags?: string[] }) {
   if (!tags?.length) return null;
@@ -384,7 +384,7 @@ function TileTags({ tags }: { tags?: string[] }) {
       {tags.map((tag) => (
         <span
           key={tag}
-          className="rounded-sm bg-white px-3 py-1.5 font-mono text-[12px] leading-none text-black shadow-sm"
+          className="rounded-sm bg-white px-3 py-1.5 font-sans text-[12px] leading-none text-ink shadow-sm"
         >
           {tag}
         </span>
@@ -417,15 +417,13 @@ function ProjectCard({ project }: { project: Project }) {
         <ProjectPanel project={project} />
       </div>
 
-      {/* Caption — left-aligned, directly below the panel. Title in
-          Roboto (matches the nav); subtitle in Magda mono. */}
-      <div className="pt-3">
-        <h3 className="font-roboto font-medium text-[17px] tracking-wide leading-tight text-ink">
-          {project.title}
-        </h3>
-        <p className="mt-1.5 font-mono text-[13px] leading-snug text-meta">
-          {project.subtitle}
-        </p>
+      {/* Caption — one line under the panel, like a credit: title in ink
+          (medium), a faint slash, then the subtitle in meta grey (regular).
+          Long ones wrap as running text. */}
+      <div className="pt-2 font-sans font-normal text-[12px] leading-[1.5]">
+        <h3 className="inline text-[12px] font-medium leading-[1.5] text-ink">{project.title}</h3>
+        <span aria-hidden className="mx-1 text-ink/25">/</span>
+        <span className="text-meta">{project.subtitle}</span>
       </div>
     </>
   );
@@ -453,9 +451,9 @@ export function ProjectGallery() {
       {/* Explicit columns: each column is an independent top-aligned stack, so
           tiles land exactly where assigned and differing heights stagger the
           columns. Stacks to one column below lg. */}
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-start">
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-2">
         {([1, 2, 3] as const).map((col) => (
-          <div key={col} className="flex flex-1 flex-col gap-3">
+          <div key={col} className="flex flex-1 flex-col gap-5">
             {projects
               .filter((project) => project.col === col)
               .map((project) => (

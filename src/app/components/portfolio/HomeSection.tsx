@@ -19,8 +19,8 @@ export function HomeSection() {
             Ryan Chiou is a mechanical design engineer.
           </h1>
 
-          <p className="mt-6 font-mono text-[14px] text-ink">
-            MechE @ UIUC <span className="mx-1.5 text-meta">/</span> Prev. Tesla, IBM
+          <p className="mt-6 font-sans font-normal text-[14px] tracking-wide text-meta">
+            MechE @ UIUC <span className="mx-1.5 text-ink/25">/</span> Prev. Tesla, IBM
           </p>
         </div>
 
