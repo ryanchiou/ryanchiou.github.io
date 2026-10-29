@@ -69,7 +69,10 @@ solid = mask & ~reach
 # The floor shadow: flood in from the bottom edge through anything that isn't
 # ink or orange fur, but only in a band just above the paw line, so it takes
 # the shadow and the gaps between the legs and stops at every paw outline.
-passable = (gray > 175) & (warm < 26) & (yy > GROUND - 40)
+# The shadow's pinkish grey (warm, but paler than orange fur) also reaches a
+# little higher, up the side of the front paw, so it's followed further up.
+shadowish = (warm > 7) & (warm < 26) & (gray > 175) & (gray < 248)
+passable = ((gray > 175) & (warm < 26) & (yy > GROUND - 40)) | (shadowish & (yy > GROUND - 110))
 floor = ndi.binary_propagation(passable & (yy >= H - 2), mask=passable)
 solid &= ~floor
 
@@ -359,3 +362,6 @@ print("jaw origin ", pct((JAW_LEFT + JAW_RIGHT) / 2, JAW_TOP))
 dys, dxs = np.where(alpha > 0.3)
 print("corgi box  ", f"left {(dxs.min() - x0) / cw * 100:.1f}% right {(x1 - dxs.max()) / cw * 100:.1f}%",
       f"top {(dys.min() - y0) / ch * 100:.1f}% bottom {(y1 - GROUND) / ch * 100:.1f}%", "(for the pettable area)")
+br = BALL_R + 7  # with its outline
+print("ball       ", f"centre {pct(*BALL_C)}, box left {(BALL_C[0] - br - x0) / cw * 100:.2f}% top {(BALL_C[1] - br - y0) / ch * 100:.2f}%",
+      f"width {2 * br / cw * 100:.2f}% height {2 * br / ch * 100:.2f}%, rests at {(GROUND - y0) / ch * 100:.2f}%")
