@@ -62,6 +62,43 @@
 }
 .corgi__hit:focus-visible { outline: 1px dashed var(--color-meta); outline-offset: 5px; }
 
+/* ── the ball: click to bounce ─────────────────────────── */
+/* Centre and resting line come from the layer script's printout. The target
+   is a bit larger than the ball so it stays >= 24px on phones. */
+.corgi__ball-hit {
+  position: absolute;
+  z-index: 3;
+  left: 7.58%;
+  top: 77.03%;
+  width: 17.5%;
+  height: 17.77%;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+}
+.corgi__ball-hit:focus-visible { outline: 1px dashed var(--color-meta); outline-offset: 3px; }
+/* Nested full-canvas layers so the bounce can move each axis on its own. */
+.corgi__ball-layer { position: absolute; inset: 0; }
+.corgi__ball { transform-origin: 16.33% 85.92%; transition: rotate .3s ease; }
+.corgi__ball-hit:hover ~ .corgi__art .corgi__ball { rotate: -14deg; }
+/* A soft shadow on the grass that shrinks while the ball is up. */
+.corgi__ball-shadow {
+  position: absolute;
+  left: 16.33%;
+  top: 91.62%;
+  width: 13%;
+  height: 3.2%;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(48 72 30 / .45), transparent);
+}
+/* He watches it go: ears up, tail going. */
+.corgi[data-bounce="true"] .corgi__ear--l { rotate: 5deg; }
+.corgi[data-bounce="true"] .corgi__ear--r { rotate: -5deg; }
+.corgi[data-bounce="true"] .corgi__tail { animation-duration: .22s; }
+
 @keyframes corgi-wag {
   from { transform: rotate(-7deg); }
   to { transform: rotate(11deg); }

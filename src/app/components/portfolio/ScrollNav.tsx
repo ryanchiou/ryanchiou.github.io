@@ -66,7 +66,7 @@ export function ScrollNav() {
     };
   }, []);
 
-  const linkClass = "font-sans font-normal text-[14px] tracking-wide transition-colors duration-200";
+  const linkClass = "font-sans font-normal text-[14px] transition-colors duration-200";
 
   return (
     <div
