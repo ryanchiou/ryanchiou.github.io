@@ -74,7 +74,8 @@ type PlaceholderProject = {
   scale?: number;
 };
 
-type Project = BrandProject | PhotoProject | PlaceholderProject;
+/** `hidden` keeps a tile in the code but out of the gallery. */
+type Project = (BrandProject | PhotoProject | PlaceholderProject) & { hidden?: boolean };
 
 // Placement is explicit: each tile names its column, and the gallery renders
 // three independent columns (no auto-balancing). Reading left→right, top→bottom
@@ -82,8 +83,23 @@ type Project = BrandProject | PhotoProject | PlaceholderProject;
 //   Col 1: Tesla (1) / HV Electronics Packaging (4) / Tesseract (7) / Carbon Fiber Undertray (10)
 //   Col 2: 3D Scanning Robotic Arm (2) / Guccibot (5) / Tally (8) / Triggerfish (11)
 //   Col 3: Actuator Cooling Sleeve (3) / IBM (6) / Skins (9) / Project Hydra (12) / Flounder (13)
+// Coming soon is hidden; shown, it leads column 1 and the rest shift down a spot.
 const projects: Project[] = [
   // ── Column 1 ────────────────────────────────────────────────────────────
+  // Coming soon. Hidden for now; remove `hidden` to show it as the first tile.
+  // The next project's slot: a soft multi-color wash (see GradientWash) with
+  // the date in the caption, 16/10 like the rest of the first row.
+  {
+    id: "coming-soon",
+    hidden: true,
+    kind: "brand",
+    col: 1,
+    title: "Coming soon",
+    subtitle: "2027",
+    aspect: "16 / 10",
+    background: "#fa8a9c",
+    logo: <GradientWash />,
+  },
   {
     id: "tesla",
     kind: "brand",
@@ -287,6 +303,23 @@ const projects: Project[] = [
   },
 ];
 
+/* A soft multi-color wash (blue → lilac → coral/orange/magenta) for tiles
+   without art yet. Layered gradients, then blurred so every edge melts; the
+   layer overhangs the panel by 15% so the blur doesn't fade at the edges,
+   which is why the color spots sit inward of the corners they light. */
+const WASH =
+  "radial-gradient(40% 56% at 88% 12%, #ffa31a 0%, rgb(255 163 26 / 0) 70%)," +
+  "radial-gradient(30% 40% at 35% 88%, #ff1fd0 0%, rgb(255 31 208 / 0) 70%)," +
+  "radial-gradient(26% 38% at 58% 85%, #ff7a10 0%, rgb(255 122 16 / 0) 70%)," +
+  "radial-gradient(25% 38% at 88% 81%, #ff1ed9 0%, rgb(255 30 217 / 0) 70%)," +
+  "radial-gradient(28% 34% at 16% 56%, #e6b8f5 0%, rgb(230 184 245 / 0) 70%)," +
+  "radial-gradient(28% 36% at 72% 50%, #ff4470 0%, rgb(255 68 112 / 0) 70%)," +
+  "linear-gradient(152deg, #0a8be9 0%, #0a8be9 11%, #1d9cf0 25%, #8fa6e4 38%, #e5a9d6 47%, #ff7088 56%, #ff4d6c 67%, #ff3d8a 88%)";
+
+function GradientWash() {
+  return <div aria-hidden className="absolute -inset-[15%] blur-[26px]" style={{ background: WASH }} />;
+}
+
 // The inset hairline keeps the pure-white CAD tiles (and Skins' white edge)
 // crisp against the paper; on the brand colors it's all but invisible.
 const panelClass =
@@ -457,7 +490,7 @@ export function ProjectGallery() {
         {([1, 2, 3] as const).map((col) => (
           <div key={col} className="flex flex-1 flex-col gap-5">
             {projects
-              .filter((project) => project.col === col)
+              .filter((project) => project.col === col && !project.hidden)
               .map((project) => (
                 <ProjectCard key={project.id} project={project} />
               ))}
