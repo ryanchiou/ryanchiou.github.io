@@ -1,11 +1,16 @@
 """Cut src/assets/elements/corgi.png (the sitting corgi) into the layers CorgiHero animates.
 
     pip install numpy opencv-python-headless scipy   # plus `cwebp` on PATH
-    python scripts/corgi-layers.py [source.png] [output-dir]
+    python scripts/corgi-layers.py [--pond] [source.png] [output-dir]
 
 Writes grass, tail, body, ear-l, ear-r, jaw, eyes-blink, eyes-happy, ball and
 grass-front as WebP on one shared canvas, so they stack with `inset: 0`. The
 tennis ball and the grass patch are painted here in the corgi's watercolor style.
+
+--pond paints a small pond in the accent blue beside him instead of the grass,
+plus a floor shadow, as one `ground` layer on a canvas widened for the pond.
+To use it, CorgiHero loads ground.webp in place of the two grass layers and
+CorgiHero.css, BALL_HIT and BALL_SPOTS take the new percentages printed below.
 
 Cut lines, eye positions and pivots are measured from this painting (source
 px). CorgiHero.css mirrors the canvas percentages printed at the end, so
@@ -16,8 +21,10 @@ import numpy as np, cv2
 from scipy import ndimage as ndi
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "src/assets/elements/corgi.png")
-OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(ROOT, "src/assets/elements/corgi")
+POND = "--pond" in sys.argv
+ARGS = [a for a in sys.argv[1:] if a != "--pond"]
+SRC = ARGS[0] if len(ARGS) > 0 else os.path.join(ROOT, "src/assets/elements/corgi.png")
+OUT = ARGS[1] if len(ARGS) > 1 else os.path.join(ROOT, "src/assets/elements/corgi")
 SCALE = 0.5
 PAPER = 253.0
 INK = np.array([24, 33, 52], np.float32)  # BGR, core of the outline strokes
@@ -169,10 +176,11 @@ def eye_patch(kind):
     return lids * (1 - stroke[..., None]) + INK * stroke[..., None], np.maximum(patch_a, stroke)
 
 # ── paint area ─────────────────────────────────────────────
-# The ball and grass are painted on an area a little wider than the painting
-# (the grass runs past the tail); the final canvas is cropped to fit them all.
+# The ball and ground are painted on an area wider than the painting (the
+# grass runs a little past the tail, the pond well past it); the final canvas
+# is cropped to fit them all.
 BALL_C, BALL_R = (196, GROUND - 66), 66
-CW = W + 120
+CW = W + (480 if POND else 120)
 gy, gx = np.mgrid[0:H, 0:CW].astype(np.float32)
 
 # ── tennis ball, painted to match ──────────────────────────
@@ -235,91 +243,177 @@ ball_a = np.maximum(ball, outline)
 # clumping along the rim (taller toward the ends), and short flicks through the
 # wash. No ink outline: it stays background to the corgi. `grass` sits behind
 # him; `grass-front` is a few short blades in front of the paws.
-grass_rng = np.random.default_rng(7)
-GRASS_C, GRASS_R = (600, GROUND + 14), (540, 62)
-GRASS_LIGHT = np.array([162, 228, 214], np.float32)  # BGR: spring green, warm to sit with the orange
-GRASS_DEEP = np.array([66, 146, 100], np.float32)
-BAND = (GROUND - 200, H)  # blades are drawn in this row band to keep it quick
+def paint_grass():
+    """The default ground: `grass` behind him, `grass-front` before his paws."""
+    grass_rng = np.random.default_rng(7)
+    GRASS_C, GRASS_R = (600, GROUND + 14), (540, 62)
+    GRASS_LIGHT = np.array([162, 228, 214], np.float32)  # BGR: spring green, warm to sit with the orange
+    GRASS_DEEP = np.array([66, 146, 100], np.float32)
+    BAND = (GROUND - 200, H)  # blades are drawn in this row band to keep it quick
 
-def gnoise(sigma):
-    n = cv2.GaussianBlur(grass_rng.normal(0, 1, (H, CW)).astype(np.float32), (0, 0), sigma)
-    return n / (n.std() + 1e-6)
+    def gnoise(sigma):
+        n = cv2.GaussianBlur(grass_rng.normal(0, 1, (H, CW)).astype(np.float32), (0, 0), sigma)
+        return n / (n.std() + 1e-6)
 
-gcx, gcy = GRASS_C
-u, v = (gx - gcx) / GRASS_R[0], (gy - gcy) / GRASS_R[1]
-theta = np.arctan2(v, u)
-wob = sum(amp * np.sin(k * theta + grass_rng.uniform(0, 6.28)) for k, amp in [(3, .05), (5, .04), (9, .025), (17, .015)])
-r = np.hypot(u, v) - wob - 0.02 * gnoise(6)
-wash = 1 - smoothstep(0.97, 1.0, r)
-d = (0.36 + 0.14 * gnoise(26) + 0.05 * gnoise(5)
-     + 0.5 * np.exp(-np.clip((1 - r) * GRASS_R[1], 0, None) / 7)          # wet edge
-     + 0.5 * np.exp(-(((gx - 640) / 320) ** 2 + ((gy - (GROUND + 4)) / 30) ** 2)))  # under the paws
-d = np.clip(d, 0, 1)[..., None]
-grass_col = GRASS_LIGHT * (1 - d) + GRASS_DEEP * d
-grass_a = wash * np.clip(0.28 + 0.66 * d[..., 0], 0, 1)
+    gcx, gcy = GRASS_C
+    u, v = (gx - gcx) / GRASS_R[0], (gy - gcy) / GRASS_R[1]
+    theta = np.arctan2(v, u)
+    wob = sum(amp * np.sin(k * theta + grass_rng.uniform(0, 6.28)) for k, amp in [(3, .05), (5, .04), (9, .025), (17, .015)])
+    r = np.hypot(u, v) - wob - 0.02 * gnoise(6)
+    wash = 1 - smoothstep(0.97, 1.0, r)
+    d = (0.36 + 0.14 * gnoise(26) + 0.05 * gnoise(5)
+         + 0.5 * np.exp(-np.clip((1 - r) * GRASS_R[1], 0, None) / 7)          # wet edge
+         + 0.5 * np.exp(-(((gx - 640) / 320) ** 2 + ((gy - (GROUND + 4)) / 30) ** 2)))  # under the paws
+    d = np.clip(d, 0, 1)[..., None]
+    grass_col = GRASS_LIGHT * (1 - d) + GRASS_DEEP * d
+    grass_a = wash * np.clip(0.28 + 0.66 * d[..., 0], 0, 1)
 
-def blade_mask(base, height, width, lean, bend, ss=3):
-    """A tapered, slightly curved blade: wide at the base, pointed at the tip."""
-    t = np.linspace(0, 1, 24)
-    sx = base[0] + lean * height * t + bend * height * t ** 2
-    sy = base[1] - height * t
-    half = width / 2 * (1 - t) ** 0.9
-    nx, ny = np.gradient(sy), -np.gradient(sx)
-    nl = np.hypot(nx, ny) + 1e-6
-    poly = np.vstack([np.stack([sx + nx / nl * half, sy + ny / nl * half], 1),
-                      np.stack([sx - nx / nl * half, sy - ny / nl * half], 1)[::-1]])
-    bh = BAND[1] - BAND[0]
-    big = np.zeros((bh * ss, CW * ss), np.uint8)
-    cv2.fillPoly(big, [np.round((poly - [0, BAND[0]]) * ss).astype(np.int32)], 255, lineType=cv2.LINE_AA)
-    out = np.zeros((H, CW), np.float32)
-    out[BAND[0]:BAND[1]] = cv2.resize(big, (CW, bh), interpolation=cv2.INTER_AREA).astype(np.float32) / 255
-    return out
+    def blade_mask(base, height, width, lean, bend, ss=3):
+        """A tapered, slightly curved blade: wide at the base, pointed at the tip."""
+        t = np.linspace(0, 1, 24)
+        sx = base[0] + lean * height * t + bend * height * t ** 2
+        sy = base[1] - height * t
+        half = width / 2 * (1 - t) ** 0.9
+        nx, ny = np.gradient(sy), -np.gradient(sx)
+        nl = np.hypot(nx, ny) + 1e-6
+        poly = np.vstack([np.stack([sx + nx / nl * half, sy + ny / nl * half], 1),
+                          np.stack([sx - nx / nl * half, sy - ny / nl * half], 1)[::-1]])
+        bh = BAND[1] - BAND[0]
+        big = np.zeros((bh * ss, CW * ss), np.uint8)
+        cv2.fillPoly(big, [np.round((poly - [0, BAND[0]]) * ss).astype(np.int32)], 255, lineType=cv2.LINE_AA)
+        out = np.zeros((H, CW), np.float32)
+        out[BAND[0]:BAND[1]] = cv2.resize(big, (CW, bh), interpolation=cv2.INTER_AREA).astype(np.float32) / 255
+        return out
 
-def paint_blades(items, col, a):
-    """items: (base, height, width, lean, bend, shade 0-1, alpha); painted over col/a."""
-    for base, h, w, lean, bend, shade, al0 in items:
-        m = blade_mask(base, h, w, lean, bend) * al0
-        c = GRASS_LIGHT * (1 - shade) + GRASS_DEEP * shade
-        col = c * m[..., None] + col * (1 - m[..., None])
-        a = m + a * (1 - m)
-    return col, a
+    def paint_blades(items, col, a):
+        """items: (base, height, width, lean, bend, shade 0-1, alpha); painted over col/a."""
+        for base, h, w, lean, bend, shade, al0 in items:
+            m = blade_mask(base, h, w, lean, bend) * al0
+            c = GRASS_LIGHT * (1 - shade) + GRASS_DEEP * shade
+            col = c * m[..., None] + col * (1 - m[..., None])
+            a = m + a * (1 - m)
+        return col, a
 
-g = grass_rng
-flicks = []
-for _ in range(60):  # short flicks through the wash
-    th, rr = g.uniform(-np.pi, np.pi), np.sqrt(g.uniform(0, 1)) * 0.95
-    flicks.append(((gcx + GRASS_R[0] * rr * np.cos(th), gcy + GRASS_R[1] * rr * np.sin(th)),
-                   g.uniform(14, 26), g.uniform(6, 9), g.uniform(-0.5, 0.5), g.uniform(-0.3, 0.3), g.uniform(0.55, 1), g.uniform(0.35, 0.6)))
-rim = []
-ph1, ph2 = g.uniform(0, 6.28, 2)
-for th in np.linspace(-np.pi, np.pi, 96, endpoint=False) + g.uniform(0, 0.2):
-    th += g.uniform(-0.08, 0.08)
-    clump = (np.sin(3 * th + ph1) + 0.6 * np.sin(7 * th + ph2)) / 1.6  # -1..1 along the rim
-    if clump < -0.25 and g.uniform() < 0.8:  # sparse stretches between clumps
-        continue
-    ex, ey = np.cos(th), np.sin(th)
-    h = g.uniform(28, 58) * (0.55 + 0.9 * abs(ex) ** 3) * (1.0 if ey < 0 else 0.75) * (0.75 + 0.45 * max(clump, 0))
-    rim.append(((gcx + GRASS_R[0] * ex * 0.985, gcy + GRASS_R[1] * ey * 0.9 + g.uniform(-4, 4)),
-                h, g.uniform(8, 13), 0.55 * ex + g.uniform(-0.25, 0.25), g.uniform(-0.3, 0.3), g.uniform(0.45, 1), g.uniform(0.75, 0.95)))
+    g = grass_rng
+    flicks = []
+    for _ in range(60):  # short flicks through the wash
+        th, rr = g.uniform(-np.pi, np.pi), np.sqrt(g.uniform(0, 1)) * 0.95
+        flicks.append(((gcx + GRASS_R[0] * rr * np.cos(th), gcy + GRASS_R[1] * rr * np.sin(th)),
+                       g.uniform(14, 26), g.uniform(6, 9), g.uniform(-0.5, 0.5), g.uniform(-0.3, 0.3), g.uniform(0.55, 1), g.uniform(0.35, 0.6)))
+    rim = []
+    ph1, ph2 = g.uniform(0, 6.28, 2)
+    for th in np.linspace(-np.pi, np.pi, 96, endpoint=False) + g.uniform(0, 0.2):
+        th += g.uniform(-0.08, 0.08)
+        clump = (np.sin(3 * th + ph1) + 0.6 * np.sin(7 * th + ph2)) / 1.6  # -1..1 along the rim
+        if clump < -0.25 and g.uniform() < 0.8:  # sparse stretches between clumps
+            continue
+        ex, ey = np.cos(th), np.sin(th)
+        h = g.uniform(28, 58) * (0.55 + 0.9 * abs(ex) ** 3) * (1.0 if ey < 0 else 0.75) * (0.75 + 0.45 * max(clump, 0))
+        rim.append(((gcx + GRASS_R[0] * ex * 0.985, gcy + GRASS_R[1] * ey * 0.9 + g.uniform(-4, 4)),
+                    h, g.uniform(8, 13), 0.55 * ex + g.uniform(-0.25, 0.25), g.uniform(-0.3, 0.3), g.uniform(0.45, 1), g.uniform(0.75, 0.95)))
 
-def tuft(center, n, hmin, hmax, spread):
-    out = []
-    for _ in range(n):
-        bx = center[0] + g.uniform(-spread, spread)
-        out.append(((bx, center[1] + g.uniform(-6, 6)), g.uniform(hmin, hmax), g.uniform(7, 11),
-                    g.uniform(-0.45, 0.45) + (bx - center[0]) / spread * 0.25, g.uniform(-0.25, 0.25), g.uniform(0.35, 0.95), g.uniform(0.75, 0.95)))
-    return out
+    def tuft(center, n, hmin, hmax, spread):
+        out = []
+        for _ in range(n):
+            bx = center[0] + g.uniform(-spread, spread)
+            out.append(((bx, center[1] + g.uniform(-6, 6)), g.uniform(hmin, hmax), g.uniform(7, 11),
+                        g.uniform(-0.45, 0.45) + (bx - center[0]) / spread * 0.25, g.uniform(-0.25, 0.25), g.uniform(0.35, 0.95), g.uniform(0.75, 0.95)))
+        return out
 
-grass_col, grass_a = paint_blades(flicks + rim + tuft((90, 1172), 6, 40, 90, 34) + tuft((1110, 1176), 7, 40, 95, 36), grass_col, grass_a)
-front_col, front_a = paint_blades(tuft((430, 1226), 4, 22, 42, 26) + tuft((770, 1230), 4, 22, 42, 30) + tuft((300, 1236), 3, 18, 34, 20),
-                                  np.zeros((H, CW, 3), np.float32), np.zeros((H, CW), np.float32))
+    grass_col, grass_a = paint_blades(flicks + rim + tuft((90, 1172), 6, 40, 90, 34) + tuft((1110, 1176), 7, 40, 95, 36), grass_col, grass_a)
+    front_col, front_a = paint_blades(tuft((430, 1226), 4, 22, 42, 26) + tuft((770, 1230), 4, 22, 42, 30) + tuft((300, 1236), 3, 18, 34, 20),
+                                      np.zeros((H, CW, 3), np.float32), np.zeros((H, CW), np.float32))
+    return [('grass', grass_col, grass_a), ('grass-front', front_col, front_a)]
+
+
+# ── pond, painted to match ─────────────────────────────────
+# A small pond beside him, tucked behind his back haunch, in the site's accent
+# blue (#1a4fff) so it answers the orange fur. Dilute where it catches the sky,
+# pooled deep along the wet edge and toward the far bank, with horizontal
+# ripples, a little granulation, a few glints lifted back to paper and one
+# small ripple. No ink outline, so it stays background to the corgi.
+def paint_pond():
+    """With --pond: one `ground` layer, the pond under his floor shadow."""
+    pond_rng = np.random.default_rng(5)
+    POND_C, POND_R = (1165, GROUND - 58), (340, 70)
+    POND_LIGHT = np.array([255, 222, 196], np.float32)  # BGR: the accent blue, well diluted
+    POND_DEEP = np.array([236, 78, 26], np.float32)     # BGR: ≈ #1a4fff where pigment pools
+
+    def pnoise(sx, sy=None):
+        n = cv2.GaussianBlur(pond_rng.normal(0, 1, (H, CW)).astype(np.float32), (0, 0), sigmaX=sx, sigmaY=sy or sx)
+        return n / (n.std() + 1e-6)
+
+    pcx, pcy = POND_C
+    u, v = (gx - pcx) / POND_R[0], (gy - pcy) / POND_R[1]
+    theta = np.arctan2(v, u)
+    wob = sum(amp * np.sin(k * theta + ph) for k, amp, ph in [(2, .07, 2.2), (3, .05, 0.4), (5, .025, 4.1), (11, .008, 1.3)])
+    r = np.hypot(u, v) - wob - 0.006 * pnoise(9)
+    wash = 1 - smoothstep(0.96, 1.0, r)
+
+    def ring(c, rx, ry, a0, a1, width):
+        """A partial ellipse stroke, for ripples."""
+        pts = [(c[0] + rx * np.cos(np.radians(a)), c[1] + ry * np.sin(np.radians(a))) for a in np.linspace(a0, a1, 9)]
+        return ink_stroke(pts, width, (0.3, 0.3))
+
+    # lifted glints: short horizontal strokes, each sagging slightly, and one
+    # ripple (two rings) out past the tail
+    glints = np.zeros((H, CW), np.float32)
+    for du, dv, length, width in [(-0.36, 0.28, 0.28, 11), (0.0, 0.52, 0.32, 11), (-0.12, -0.16, 0.16, 9)]:
+        pts = [(pcx + (du + t) * POND_R[0], pcy + (dv + 0.06 * (2 * t / length) ** 2) * POND_R[1])
+               for t in np.linspace(-length / 2, length / 2, 5)]
+        glints = np.maximum(glints, ink_stroke(pts, width, (0.5, 0.5)))
+    RIPPLE = (pcx + 0.52 * POND_R[0], pcy + 0.06 * POND_R[1])
+    glints = np.maximum(glints, ring(RIPPLE, 36, 10, 195, 345, 9))
+    glints = np.maximum(glints, 0.75 * ring(RIPPLE, 72, 20, 188, 352, 9))
+    glints = cv2.GaussianBlur(glints, (0, 0), 1.5)
+
+    # Shaded like the fur: deep under the far bank, paler toward us, darker again
+    # where the wash dried at its edge, with soft blooms rather than streaks.
+    d = (0.34 + 0.10 * pnoise(34) + 0.04 * pnoise(60, 3)                     # blooms + faint ripples
+         + 0.55 * smoothstep(0.1, -0.95, v)                                    # deep toward the far bank
+         - 0.12 * smoothstep(0.2, 0.9, v)                                      # paler nearer us
+         + 0.30 * np.exp(-np.clip((1 - r) * POND_R[1], 0, None) / 9)           # wet edge
+         + 0.04 * pnoise(0.8)                                                  # granulation
+         - 0.8 * glints)
+    d = np.clip(d, 0, 1)
+    pond_col = POND_LIGHT * (1 - d[..., None]) + POND_DEEP * d[..., None]
+    pond_a = wash * np.clip(0.32 + 0.68 * d, 0, 1) * (1 - 0.9 * glints)
+
+    # ── floor shadow ───────────────────────────────────────────
+    # A soft cool-grey shadow under him, like the one in the original painting
+    # (cut away with the floor above), deepest right under the paws.
+    SHADOW = np.array([150, 128, 136], np.float32)  # BGR: lavender grey
+    SHADOW_C, SHADOW_R = (575, GROUND + 6), (400, 40)
+    su, sv = (gx - SHADOW_C[0]) / SHADOW_R[0], (gy - SHADOW_C[1]) / SHADOW_R[1]
+    sr = np.hypot(su, sv) + 0.04 * pnoise(10)
+    under_paws = (np.exp(-((gy - (GROUND + 2)) / 13) ** 2)
+                  * smoothstep(240, 300, gx) * (1 - smoothstep(850, 930, gx)))
+    shadow_a = np.clip((1 - smoothstep(0.45, 1.0, sr)) * (0.16 + 0.03 * pnoise(18)) + 0.16 * under_paws, 0, 1)
+
+    # the shadow lies over the pond's near edge where they meet
+    ground_a = shadow_a + pond_a * (1 - shadow_a)
+    ground_col = ((SHADOW * shadow_a[..., None] + pond_col * (pond_a * (1 - shadow_a))[..., None])
+                  / np.maximum(ground_a, 1e-4)[..., None])
+    return [('ground', ground_col, ground_a)]
+
+
+ground_layers = paint_pond() if POND else paint_grass()
 
 # ── canvas ─────────────────────────────────────────────────
-# Everything drawn, plus a little air.
 drawn = np.pad(alpha, ((0, 0), (0, CW - W))) > 0.02
-drawn |= (ball_a > 0.02) | (grass_a > 0.02) | (front_a > 0.02)
+drawn |= ball_a > 0.02
+for _, _, a_ in ground_layers:
+    drawn |= a_ > 0.02
 ys, xs = np.where(drawn)
-x0, x1, y0, y1 = max(xs.min() - 16, 0), xs.max() + 16, ys.min() - 16, min(ys.max() + 16, H)
+if POND:
+    # Same left, top and bottom as the grass canvas, so the corgi keeps its
+    # on-screen size and the CSS's vertical percentages hold; the right edge
+    # takes in the pond, plus a little air.
+    x0, y0, y1 = 4, 111, 1269
+    x1 = xs.max() + 16
+else:
+    # Everything drawn, plus a little air.
+    x0, x1, y0, y1 = max(xs.min() - 16, 0), xs.max() + 16, ys.min() - 16, min(ys.max() + 16, H)
 
 # ── write layers ───────────────────────────────────────────
 TMP = tempfile.mkdtemp()
@@ -347,8 +441,8 @@ save_layer('jaw', color, alpha * jaw)
 for kind in ('blink', 'happy'):
     save_layer(f'eyes-{kind}', *eye_patch(kind))
 save_layer('ball', ball_col, ball_a)
-save_layer('grass', grass_col, grass_a)
-save_layer('grass-front', front_col, front_a)
+for name, col, a_ in ground_layers:
+    save_layer(name, col, a_)
 shutil.rmtree(TMP)
 
 # Canvas percentages for CorgiHero.css.
@@ -365,3 +459,14 @@ print("corgi box  ", f"left {(dxs.min() - x0) / cw * 100:.1f}% right {(x1 - dxs.
 br = BALL_R + 7  # with its outline
 print("ball       ", f"centre {pct(*BALL_C)}, box left {(BALL_C[0] - br - x0) / cw * 100:.2f}% top {(BALL_C[1] - br - y0) / ch * 100:.2f}%",
       f"width {2 * br / cw * 100:.2f}% height {2 * br / ch * 100:.2f}%, rests at {(GROUND - y0) / ch * 100:.2f}%")
+# The rest of CorgiHero.css's boxes, set in source px:
+px = lambda x: f"{(x - x0) / cw * 100:.2f}%"
+py = lambda y: f"{(y - y0) / ch * 100:.2f}%"
+PET = (251, 146, 1027, 1188)  # pettable area l, t, r, b: the dog, not the ball or the ground
+HIT = 206                     # the ball's click target, a square on the ball (>= 24px on phones)
+SHADOW_BOX = (153, 37)        # the ball's CSS shadow, w x h
+FRONT = (274, 43)             # the ball's second resting spot, in front of the paws (offset)
+print("pet area   ", f"inset {py(PET[1])} {(x1 - PET[2]) / cw * 100:.2f}% {(y1 - PET[3]) / ch * 100:.2f}% {px(PET[0])}")
+print("ball hit   ", f"left {px(BALL_C[0] - HIT / 2)} top {py(BALL_C[1] - HIT / 2)} width {HIT / cw * 100:.2f}% height {HIT / ch * 100:.2f}%")
+print("ball shadow", f"left {px(BALL_C[0])} top {py(GROUND)} width {SHADOW_BOX[0] / cw * 100:.2f}% height {SHADOW_BOX[1] / ch * 100:.2f}%")
+print("ball spot 2", f"x {FRONT[0] / cw * 100:.2f} y {FRONT[1] / ch * 100:.2f} (BALL_SPOTS in ballBounce.ts)")
