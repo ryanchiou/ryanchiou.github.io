@@ -14,6 +14,7 @@ import hvboxImg from "@/assets/tiles_proj/hvbox.png";
 import tesseractImg from "@/assets/tiles_proj/tesseract.png";
 import undertrayImg from "@/assets/tiles_proj/undertray.png";
 import scanningRobotImg from "@/assets/tiles_proj/3D-scanning_robotic-arm.png";
+import vrCushionImg from "@/assets/tiles_proj/vr-headset_cushion.png";
 import coolingSleeveImg from "@/assets/tiles_proj/lattice_cooling-sleeve.png";
 import hydraImg from "@/assets/tiles_proj/hydra.png";
 import skinsImg from "@/assets/tiles_proj/skins.png";
@@ -79,10 +80,10 @@ type Project = (BrandProject | PhotoProject | PlaceholderProject) & { hidden?: b
 
 // Placement is explicit: each tile names its column, and the gallery renders
 // three independent columns (no auto-balancing). Reading left→right, top→bottom
-// the tiles number 1..13:
+// the tiles number 1..14:
 //   Col 1: Tesla (1) / HV Electronics Packaging (4) / Tesseract (7) / Carbon Fiber Undertray (10)
 //   Col 2: 3D Scanning Robotic Arm (2) / Guccibot (5) / Tally (8) / Triggerfish (11)
-//   Col 3: Actuator Cooling Sleeve (3) / IBM (6) / Skins (9) / Project Hydra (12) / Flounder (13)
+//   Col 3: VR Headset Cushion (3) / Actuator Cooling Sleeve (6) / IBM (9) / Skins (12) / Project Hydra (13) / Flounder (14)
 // Coming soon is hidden; shown, it leads column 1 and the rest shift down a spot.
 const projects: Project[] = [
   // ── Column 1 ────────────────────────────────────────────────────────────
@@ -172,7 +173,7 @@ const projects: Project[] = [
   // ── Column 2 ────────────────────────────────────────────────────────────
   // 3D Scanning Robotic Arm (tile 2). CAD render of the arm reaching out to the
   // side, a wide object (aspect 1.70), so it gets the same 16/10 landscape tile
-  // as the cooling sleeve beside it.
+  // as the VR headset cushion beside it.
   {
     id: "scanning-robot",
     kind: "photo",
@@ -182,7 +183,7 @@ const projects: Project[] = [
     aspect: "16 / 10",
     src: scanningRobotImg,
     // The arm runs corner to corner and leaves the other corners empty, so
-    // at the shared cap it reads smaller than the solid sleeve beside it.
+    // at the shared cap it reads smaller than the solid cushion beside it.
     scale: 76,
     alt: "Robotic arm with a 3D scanner mounted on its end effector",
   },
@@ -229,7 +230,19 @@ const projects: Project[] = [
     alt: "Triggerfish deep sea ROV with thrusters, camera dome and gripper arm",
   },
   // ── Column 3 ────────────────────────────────────────────────────────────
-  // Actuator Cooling Sleeve (tile 3). Wide lattice ring (object aspect 1.61)
+  // VR Headset Cushion (tile 3). Lattice face cushion with its ground shadow (object
+  // aspect 1.65), in the first row's 16/10 landscape tile.
+  {
+    id: "vr-cushion",
+    kind: "photo",
+    col: 3,
+    title: "VR Headset Cushion",
+    subtitle: "Additive Manufacturing",
+    aspect: "16 / 10",
+    src: vrCushionImg,
+    alt: "3D-printed lattice face cushion for a VR headset",
+  },
+  // Actuator Cooling Sleeve (tile 6). Wide lattice ring (object aspect 1.61)
   // in a matching landscape tile.
   {
     id: "cooling-sleeve",
@@ -274,7 +287,7 @@ const projects: Project[] = [
     scale: 85,
     alt: "Skins app home screen on a phone, showing a skin health score with hydration, texture and tone",
   },
-  // Project Hydra (tile 12). Product photo, not a CAD render, near-square
+  // Project Hydra (tile 13). Product photo, not a CAD render, near-square
   // (aspect 1.05). The tile is a touch shorter than square; scale 70 keeps the
   // photo ~65% of the tile width, as large as the other renders.
   {
@@ -288,7 +301,7 @@ const projects: Project[] = [
     scale: 70,
     alt: "Project Hydra liquid-cooled mini-ITX PC with custom water-cooling loop",
   },
-  // Flounder (tile 13).
+  // Flounder (tile 14).
   {
     id: "flounder",
     kind: "photo",
