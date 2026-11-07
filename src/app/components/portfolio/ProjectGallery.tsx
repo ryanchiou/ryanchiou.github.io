@@ -171,9 +171,9 @@ const projects: Project[] = [
     alt: "Carbon fiber undertray geometry optimization study",
   },
   // ── Column 2 ────────────────────────────────────────────────────────────
-  // 3D Scanning Robotic Arm (tile 2). CAD render of the arm reaching out to the
-  // side, a wide object (aspect 1.70), so it gets the same 16/10 landscape tile
-  // as the VR headset cushion beside it.
+  // 3D Scanning Robotic Arm (tile 2). CAD render of the arm on its base, a
+  // compact object (aspect 1.22), kept in the same 16/10 landscape tile as the
+  // VR headset cushion beside it so the top row lines up.
   {
     id: "scanning-robot",
     kind: "photo",
@@ -182,8 +182,8 @@ const projects: Project[] = [
     subtitle: "3D Reconstruction",
     aspect: "16 / 10",
     src: scanningRobotImg,
-    // The arm runs corner to corner and leaves the other corners empty, so
-    // at the shared cap it reads smaller than the solid cushion beside it.
+    // Narrower than the tile, so it fits by height; above the shared cap so it
+    // reads about as large as the cushion beside it.
     scale: 76,
     alt: "Robotic arm with a 3D scanner mounted on its end effector",
   },
