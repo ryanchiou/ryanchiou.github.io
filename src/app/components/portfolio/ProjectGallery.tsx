@@ -82,8 +82,8 @@ type Project = (BrandProject | PhotoProject | PlaceholderProject) & { hidden?: b
 // three independent columns (no auto-balancing). Reading left→right, top→bottom
 // the tiles number 1..14:
 //   Col 1: Tesla (1) / HV Electronics Packaging (4) / Tesseract (7) / Carbon Fiber Undertray (10)
-//   Col 2: 3D Scanning Robotic Arm (2) / Guccibot (5) / Tally (8) / Triggerfish (11)
-//   Col 3: VR Headset Cushion (3) / Actuator Cooling Sleeve (6) / IBM (9) / Skins (12) / Project Hydra (13) / Flounder (14)
+//   Col 2: 3D Scanning Robotic Arm (2) / Guccibot (5) / Tally (8) / Triggerfish (11) / Project Hydra (13)
+//   Col 3: VR Headset Cushion (3) / Actuator Cooling Sleeve (6) / IBM (9) / Skins (12) / Flounder (14)
 // Coming soon is hidden; shown, it leads column 1 and the rest shift down a spot.
 const projects: Project[] = [
   // ── Column 1 ────────────────────────────────────────────────────────────
@@ -107,7 +107,7 @@ const projects: Project[] = [
     col: 1,
     title: "Tesla",
     subtitle: "Battery & Energy Plastics",
-    tags: ["Injection Molding", "DFMA", "RCA"],
+    tags: ["DFM", "DFA", "Moldflow", "GD&T"],
     aspect: "16 / 9",
     // Logo JPG is tagged Display P3, so the browser color-manages its #CE3642
     // pixels to sRGB #E01D3C on screen. Match that here (not the raw pixel value)
@@ -131,7 +131,7 @@ const projects: Project[] = [
     col: 1,
     title: "HV System Enclosure",
     subtitle: "Sensor Integration",
-    tags: ["Electronics Packaging", "Sheet Metal Design"],
+    tags: ["CAD", "Electronics Packaging"],
     aspect: "1 / 1",
     src: hvboxImg,
     // Tall object in a square tile reads small at the shared scale, so bump
@@ -147,7 +147,7 @@ const projects: Project[] = [
     col: 1,
     title: "Tesseract",
     subtitle: "Sub-7 Liter PC",
-    tags: ["Computer Hardware", "Cooling Optimization"],
+    tags: ["Computer Hardware"],
     // Short landscape tile, a touch taller than the 16/9 & 16/10 neighbours.
     aspect: "4 / 3",
     src: tesseractImg,
@@ -163,7 +163,7 @@ const projects: Project[] = [
     col: 1,
     title: "Carbon Fiber Undertray",
     subtitle: "Airfoil Optimization",
-    tags: ["CFD", "Composite Mfg"],
+    tags: ["CAD", "CFD", "Carbon Fiber Layups"],
     aspect: "16 / 10",
     src: undertrayImg,
     // Larger than the shared default cap to fill more of the wide tile.
@@ -180,6 +180,7 @@ const projects: Project[] = [
     col: 2,
     title: "3D Scanning Robotic Arm",
     subtitle: "3D Reconstruction",
+    tags: ["CAD", "FEA", "Point Cloud Fusion"],
     aspect: "16 / 10",
     src: scanningRobotImg,
     // Narrower than the tile, so it fits by height; above the shared cap so it
@@ -206,7 +207,7 @@ const projects: Project[] = [
     col: 2,
     title: "Tally",
     subtitle: "Viral Social Accountability Platform",
-    tags: ["Product Mgmt", "Product Design"],
+    tags: ["Product Design", "Vibe-Coding"],
     aspect: "16 / 9",
     background: "#161b2b",
     logo: (
@@ -224,10 +225,26 @@ const projects: Project[] = [
     col: 2,
     title: "Triggerfish",
     subtitle: "Deep Sea ROV",
+    tags: ["CAD", "Arduino", "Raspberry Pi"],
     aspect: "4 / 3",
     src: triggerfishImg,
     scale: 70,
     alt: "Triggerfish deep sea ROV with thrusters, camera dome and gripper arm",
+  },
+  // Project Hydra (tile 13). Product photo, not a CAD render, near-square
+  // (aspect 1.05). The tile is a touch shorter than square; scale 70 keeps the
+  // photo ~65% of the tile width, as large as the other renders.
+  {
+    id: "hydra",
+    kind: "photo",
+    col: 2,
+    title: "Project Hydra",
+    subtitle: "Liquid-Cooled ITX PC",
+    tags: ["Computer Hardware", "Liquid Cooling"],
+    aspect: "9 / 8",
+    src: hydraImg,
+    scale: 70,
+    alt: "Project Hydra liquid-cooled mini-ITX PC with custom water-cooling loop",
   },
   // ── Column 3 ────────────────────────────────────────────────────────────
   // VR Headset Cushion (tile 3). Lattice face cushion with its ground shadow (object
@@ -238,6 +255,7 @@ const projects: Project[] = [
     col: 3,
     title: "VR Headset Cushion",
     subtitle: "Additive Manufacturing",
+    tags: ["FEA", "Resin 3D Printing", "Product Design"],
     aspect: "16 / 10",
     src: vrCushionImg,
     alt: "3D-printed lattice face cushion for a VR headset",
@@ -250,6 +268,7 @@ const projects: Project[] = [
     col: 3,
     title: "Actuator Cooling Sleeve",
     subtitle: "Additive Manufacturing",
+    tags: ["DMLS", "AI Workflow"],
     aspect: "16 / 10",
     src: coolingSleeveImg,
     alt: "Gyroid lattice cooling sleeve for an actuator",
@@ -260,7 +279,7 @@ const projects: Project[] = [
     col: 3,
     title: "IBM",
     subtitle: "Data & Production Automation",
-    tags: ["Python", "SQL", "Quality Mgmt"],
+    tags: ["CAD", "Python", "SQL"],
     aspect: "16 / 9",
     // Blue 8-bar mark (transparent PNG, trimmed to the mark) on white.
     background: "#FFFFFF",
@@ -287,20 +306,6 @@ const projects: Project[] = [
     scale: 85,
     alt: "Skins app home screen on a phone, showing a skin health score with hydration, texture and tone",
   },
-  // Project Hydra (tile 13). Product photo, not a CAD render, near-square
-  // (aspect 1.05). The tile is a touch shorter than square; scale 70 keeps the
-  // photo ~65% of the tile width, as large as the other renders.
-  {
-    id: "hydra",
-    kind: "photo",
-    col: 3,
-    title: "Project Hydra",
-    subtitle: "Liquid-Cooled ITX PC",
-    aspect: "9 / 8",
-    src: hydraImg,
-    scale: 70,
-    alt: "Project Hydra liquid-cooled mini-ITX PC with custom water-cooling loop",
-  },
   // Flounder (tile 14).
   {
     id: "flounder",
@@ -308,7 +313,7 @@ const projects: Project[] = [
     col: 3,
     title: "Flounder",
     subtitle: "Deep Sea ROV",
-    tags: ["FDM + Resin 3D Printing", "Raspberry Pi"],
+    tags: ["Resin 3D Printing", "Raspberry Pi"],
     // ~square crop framing the ROV thruster render (object aspect 1.16).
     aspect: "6 / 5",
     src: flounderImg,
@@ -333,10 +338,9 @@ function GradientWash() {
   return <div aria-hidden className="absolute -inset-[15%] blur-[26px]" style={{ background: WASH }} />;
 }
 
-// The inset hairline keeps the pure-white CAD tiles (and Skins' white edge)
-// crisp against the paper; on the brand colors it's all but invisible.
+// No outline: the white tiles sit straight on the #f5f5f5 paper.
 const panelClass =
-  "relative flex h-full w-full items-center justify-center overflow-hidden rounded-sm ring-1 ring-inset ring-ink/8";
+  "relative flex h-full w-full items-center justify-center overflow-hidden rounded-sm";
 
 /* A CAD render centered on a white tile. The art is trimmed to its object, so
    `scale` (a % cap on both width and height, via object-contain) directly sets
@@ -452,7 +456,7 @@ function ProjectCard({ project }: { project: Project }) {
           {project.src ? (
             <CenteredArt src={project.src} alt={project.alt ?? ""} scale={project.scale} />
           ) : (
-            <div className="h-full w-full rounded-sm bg-white ring-1 ring-inset ring-ink/8" />
+            <div className="h-full w-full rounded-sm bg-white" />
           )}
         </div>
       </div>
@@ -499,9 +503,9 @@ export function ProjectGallery() {
       {/* Explicit columns: each column is an independent top-aligned stack, so
           tiles land exactly where assigned and differing heights stagger the
           columns. Stacks to one column below lg. */}
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-2">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:gap-2">
         {([1, 2, 3] as const).map((col) => (
-          <div key={col} className="flex flex-1 flex-col gap-5">
+          <div key={col} className="flex flex-1 flex-col gap-3">
             {projects
               .filter((project) => project.col === col && !project.hidden)
               .map((project) => (
