@@ -129,6 +129,10 @@
   --font-cal: 'Cal Sans', system-ui, sans-serif;
   --font-garamond: 'EB Garamond', Georgia, serif;
 
+  /* Large desktop monitors (1920px+): the page column keeps widening with the
+     window, so text steps up a size here to stay in proportion. */
+  --breakpoint-3xl: 120rem;
+
   /* Light palette. The page is the flat tone rachelchen.tech's grain texture
      averages to (minus the grain), just dark enough that the pure-white CAD
      tiles read as prints laid on it. The ink is drawn from the corgi's

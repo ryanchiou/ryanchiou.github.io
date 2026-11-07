@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { navItems, socialLinks, handleNavClick } from "./navConfig";
+import { navItems, socialLinks, handleNavClick, homeAnchor } from "./navConfig";
 import { column } from "./layout";
+import { normalizePath, useLocation } from "@/app/router";
 
 // The section that counts as "current" once its top passes this fraction of the
 // viewport height.
@@ -31,8 +32,10 @@ const currentHref = () => {
 //
 // Layout: name in the left corner, page links centered, socials in the right
 // corner. Links are muted, turn blue on hover, and the current section's link
-// stays blue.
+// stays blue. On a project page the links lead back to the home page's
+// sections, and Projects stays blue.
 export function ScrollNav() {
+  const onHome = normalizePath(useLocation().path) === "/";
   const [visible, setVisible] = useState(true);
   const [activeHref, setActiveHref] = useState(sectionHrefs[0]);
   const barRef = useRef<HTMLDivElement>(null);
@@ -43,7 +46,7 @@ export function ScrollNav() {
     const onScroll = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
-        setActiveHref(currentHref());
+        if (onHome) setActiveHref(currentHref());
 
         const y = window.scrollY;
         const height = barRef.current?.offsetHeight ?? 0;
@@ -58,15 +61,15 @@ export function ScrollNav() {
       });
     };
 
-    setActiveHref(currentHref());
+    setActiveHref(onHome ? currentHref() : "#projects");
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("scroll", onScroll);
     };
-  }, []);
+  }, [onHome]);
 
-  const linkClass = "font-sans font-normal text-[14px] transition-colors duration-200";
+  const linkClass = "font-sans font-normal text-[14px] transition-colors duration-200 3xl:text-[16px]";
 
   return (
     <div
@@ -79,26 +82,31 @@ export function ScrollNav() {
       }`}
     >
       {/* Same column as the page, so the name and socials line up with the
-          hero text and the gallery's edges. */}
-      <nav className={`${column} grid grid-cols-[1fr_auto_1fr] items-center gap-x-6 py-[18px]`}>
+          hero text and the gallery's edges. On phones (no socials) it's just
+          the name on the left and the links on the right, so the row fits
+          even a 320px screen. */}
+      <nav
+        className={`${column} flex items-center justify-between gap-x-4 py-[18px] sm:grid sm:grid-cols-[1fr_auto_1fr] sm:gap-x-6`}
+      >
         <a
-          href="#home"
-          onClick={(event) => handleNavClick(event, "#home")}
+          href={homeAnchor("#home", onHome)}
+          onClick={(event) => handleNavClick(event, homeAnchor("#home", onHome))}
           tabIndex={visible ? undefined : -1}
           className={`${linkClass} justify-self-start whitespace-nowrap text-ink hover:text-accent-blue`}
         >
           Ryan Chiou
         </a>
 
-        <div className="flex items-center gap-x-6 sm:gap-x-10">
+        <div className="flex items-center gap-x-4 min-[360px]:gap-x-6 sm:gap-x-10">
           {navItems.map(({ label, href }) => {
             const active = href === activeHref;
             const inPage = href.startsWith("#");
+            const to = inPage ? homeAnchor(href, onHome) : href;
             return (
               <a
                 key={label}
-                href={href}
-                onClick={(event) => handleNavClick(event, href)}
+                href={to}
+                onClick={(event) => handleNavClick(event, to)}
                 target={inPage ? undefined : "_blank"}
                 rel={inPage ? undefined : "noreferrer"}
                 aria-current={active ? "page" : undefined}
@@ -125,7 +133,7 @@ export function ScrollNav() {
                 target={external ? "_blank" : undefined}
                 rel={external ? "noreferrer" : undefined}
                 tabIndex={visible ? undefined : -1}
-                className="flex text-[18px] text-meta transition-colors duration-200 hover:text-accent-blue"
+                className="flex text-[18px] text-meta transition-colors duration-200 hover:text-accent-blue 3xl:text-[20px]"
               >
                 <Icon fontSize="inherit" />
               </a>

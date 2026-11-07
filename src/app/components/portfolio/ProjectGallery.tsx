@@ -1,4 +1,6 @@
-import type { ReactNode } from "react";
+import { useMemo, useSyncExternalStore, type ReactNode } from "react";
+import { Link } from "@/app/router";
+import { caseStudyPath } from "@/app/projects";
 import { column } from "./layout";
 import { HvboxExplode } from "./HvboxExplode";
 import teslaLogo from "@/assets/tiles_corp/tesla_logo.jpg";
@@ -33,14 +35,13 @@ type BaseProject = {
   id: string;
   title: string;
   subtitle: string;
-  /** The project's page. Omit until it exists; the card then renders unlinked. */
+  /** Where the card links. Defaults to the project's page when one exists
+      (src/app/projects); with neither, the card renders unlinked. */
   href?: string;
   /** CSS aspect-ratio for the image panel, e.g. "16 / 9". */
   aspect: string;
   /** Which of the three columns this tile lives in (placement is explicit). */
   col: 1 | 2 | 3;
-  /** Skill/scope chips revealed as white boxes on hover. One box per entry. */
-  tags?: string[];
 };
 
 type BrandProject = BaseProject & {
@@ -78,6 +79,13 @@ type PlaceholderProject = {
 /** `hidden` keeps a tile in the code but out of the gallery. */
 type Project = (BrandProject | PhotoProject | PlaceholderProject) & { hidden?: boolean };
 
+/** A tile's data, for its project page (title, subtitle, art). Skills live on
+    the page itself (src/app/projects). */
+export function findTile(id: string): BrandProject | PhotoProject | undefined {
+  const tile = projects.find((project) => project.id === id);
+  return tile && tile.kind !== "placeholder" ? tile : undefined;
+}
+
 // Placement is explicit: each tile names its column, and the gallery renders
 // three independent columns (no auto-balancing). Reading left→right, top→bottom
 // the tiles number 1..14:
@@ -89,7 +97,7 @@ const projects: Project[] = [
   // ── Column 1 ────────────────────────────────────────────────────────────
   // Coming soon. Hidden for now; remove `hidden` to show it as the first tile.
   // The next project's slot: a soft multi-color wash (see GradientWash) with
-  // the date in the caption, 16/10 like the rest of the first row.
+  // the date as its subtitle, 16/10 like the rest of the first row.
   {
     id: "coming-soon",
     hidden: true,
@@ -107,7 +115,6 @@ const projects: Project[] = [
     col: 1,
     title: "Tesla",
     subtitle: "Battery & Energy Plastics",
-    tags: ["DFM", "DFA", "Moldflow", "GD&T"],
     aspect: "16 / 9",
     // Logo JPG is tagged Display P3, so the browser color-manages its #CE3642
     // pixels to sRGB #E01D3C on screen. Match that here (not the raw pixel value)
@@ -131,7 +138,6 @@ const projects: Project[] = [
     col: 1,
     title: "HV System Enclosure",
     subtitle: "Sensor Integration",
-    tags: ["CAD", "Electronics Packaging"],
     aspect: "1 / 1",
     src: hvboxImg,
     // Tall object in a square tile reads small at the shared scale, so bump
@@ -147,7 +153,6 @@ const projects: Project[] = [
     col: 1,
     title: "Tesseract",
     subtitle: "Sub-7 Liter PC",
-    tags: ["Computer Hardware"],
     // Short landscape tile, a touch taller than the 16/9 & 16/10 neighbours.
     aspect: "4 / 3",
     src: tesseractImg,
@@ -163,7 +168,6 @@ const projects: Project[] = [
     col: 1,
     title: "Carbon Fiber Undertray",
     subtitle: "Airfoil Optimization",
-    tags: ["CAD", "CFD", "Carbon Fiber Layups"],
     aspect: "16 / 10",
     src: undertrayImg,
     // Larger than the shared default cap to fill more of the wide tile.
@@ -172,19 +176,18 @@ const projects: Project[] = [
   },
   // ── Column 2 ────────────────────────────────────────────────────────────
   // 3D Scanning Robotic Arm (tile 2). CAD render of the arm on its base, a
-  // compact object (aspect 1.22), kept in the same 16/10 landscape tile as the
-  // VR headset cushion beside it so the top row lines up.
+  // compact object (aspect 1.22), in a taller 4/3 tile than the 16/10 cushion
+  // beside it so the arm can read larger.
   {
     id: "scanning-robot",
     kind: "photo",
     col: 2,
     title: "3D Scanning Robotic Arm",
     subtitle: "3D Reconstruction",
-    tags: ["CAD", "FEA", "Point Cloud Fusion"],
-    aspect: "16 / 10",
+    aspect: "4 / 3",
     src: scanningRobotImg,
-    // Narrower than the tile, so it fits by height; above the shared cap so it
-    // reads about as large as the cushion beside it.
+    // Still narrower than the tile, so it fits by height and grows with it;
+    // above the shared cap so the arm is the first row's largest object.
     scale: 76,
     alt: "Robotic arm with a 3D scanner mounted on its end effector",
   },
@@ -196,7 +199,6 @@ const projects: Project[] = [
     col: 2,
     title: "Single-Input 8-Legged Robot",
     subtitle: "Mechanisms",
-    tags: ["CAD", "Mechanisms"],
     aspect: "7 / 5",
     src: guccibotImg,
     alt: "Guccibot single-DOF input walking robot",
@@ -207,11 +209,12 @@ const projects: Project[] = [
     col: 2,
     title: "Tally",
     subtitle: "Viral Social Accountability Platform",
-    tags: ["Product Design", "Vibe-Coding"],
     aspect: "16 / 9",
     background: "#161b2b",
     logo: (
-      <span className="font-garamond text-[clamp(20px,4.2vw,36px)] leading-none text-white">
+      // Sized to the tile (10% of its width), so it reads the same on every
+      // screen, like the Tesla and IBM marks.
+      <span className="font-garamond text-[10cqw] leading-none text-white">
         tally.
       </span>
     ),
@@ -225,7 +228,6 @@ const projects: Project[] = [
     col: 2,
     title: "Triggerfish",
     subtitle: "Deep Sea ROV",
-    tags: ["CAD", "Arduino", "Raspberry Pi"],
     aspect: "4 / 3",
     src: triggerfishImg,
     scale: 70,
@@ -240,7 +242,6 @@ const projects: Project[] = [
     col: 2,
     title: "Project Hydra",
     subtitle: "Liquid-Cooled ITX PC",
-    tags: ["Computer Hardware", "Liquid Cooling"],
     aspect: "9 / 8",
     src: hydraImg,
     scale: 70,
@@ -255,7 +256,6 @@ const projects: Project[] = [
     col: 3,
     title: "VR Headset Cushion",
     subtitle: "Additive Manufacturing",
-    tags: ["FEA", "Resin 3D Printing", "Product Design"],
     aspect: "16 / 10",
     src: vrCushionImg,
     alt: "3D-printed lattice face cushion for a VR headset",
@@ -268,7 +268,6 @@ const projects: Project[] = [
     col: 3,
     title: "Actuator Cooling Sleeve",
     subtitle: "Additive Manufacturing",
-    tags: ["DMLS", "AI Workflow"],
     aspect: "16 / 10",
     src: coolingSleeveImg,
     alt: "Gyroid lattice cooling sleeve for an actuator",
@@ -279,7 +278,6 @@ const projects: Project[] = [
     col: 3,
     title: "IBM",
     subtitle: "Data & Production Automation",
-    tags: ["CAD", "Python", "SQL"],
     aspect: "16 / 9",
     // Blue 8-bar mark (transparent PNG, trimmed to the mark) on white.
     background: "#FFFFFF",
@@ -300,7 +298,6 @@ const projects: Project[] = [
     col: 3,
     title: "Skins",
     subtitle: "AI Skincare Assistant",
-    tags: ["UI/UX", "Swift", "Figma"],
     aspect: "1 / 1",
     src: skinsImg,
     scale: 85,
@@ -313,7 +310,6 @@ const projects: Project[] = [
     col: 3,
     title: "Flounder",
     subtitle: "Deep Sea ROV",
-    tags: ["Resin 3D Printing", "Raspberry Pi"],
     // ~square crop framing the ROV thruster render (object aspect 1.16).
     aspect: "6 / 5",
     src: flounderImg,
@@ -338,9 +334,10 @@ function GradientWash() {
   return <div aria-hidden className="absolute -inset-[15%] blur-[26px]" style={{ background: WASH }} />;
 }
 
-// No outline: the white tiles sit straight on the #f5f5f5 paper.
+// No outline: the white tiles sit straight on the #f5f5f5 paper. A size
+// container, so a logo can scale with its tile (cqw units).
 const panelClass =
-  "relative flex h-full w-full items-center justify-center overflow-hidden rounded-sm";
+  "@container relative flex h-full w-full items-center justify-center overflow-hidden rounded-sm";
 
 /* A CAD render centered on a white tile. The art is trimmed to its object, so
    `scale` (a % cap on both width and height, via object-contain) directly sets
@@ -350,13 +347,11 @@ function CenteredArt({
   src,
   alt,
   scale = 65,
-  tags,
   art,
 }: {
   src: string;
   alt: string;
   scale?: number;
-  tags?: string[];
   art?: ReactNode;
 }) {
   return (
@@ -377,8 +372,6 @@ function CenteredArt({
           className="select-none object-contain"
         />
       )}
-      <CardOverlay />
-      <TileTags tags={tags} />
     </div>
   );
 }
@@ -388,22 +381,12 @@ function ProjectPanel({ project }: { project: BrandProject | PhotoProject }) {
     return (
       <div className={panelClass} style={{ background: project.background }}>
         {project.logo}
-        <CardOverlay />
-        <TileTags tags={project.tags} />
       </div>
     );
   }
 
   if (project.src) {
-    return (
-      <CenteredArt
-        src={project.src}
-        alt={project.alt}
-        scale={project.scale}
-        tags={project.tags}
-        art={project.art}
-      />
-    );
+    return <CenteredArt src={project.src} alt={project.alt} scale={project.scale} art={project.art} />;
   }
 
   // Placeholder panel until a real product photo is wired in.
@@ -412,36 +395,31 @@ function ProjectPanel({ project }: { project: BrandProject | PhotoProject }) {
       <span aria-hidden className="font-sans font-medium text-[15px] text-ink/20">
         {project.title}
       </span>
-      <CardOverlay />
     </div>
   );
 }
 
-/* Hover darken — the only interaction. A black layer over the panel
-   fades 0 → 0.45 on hover. Caption sits outside, so it's untouched. */
-function CardOverlay() {
-  return (
-    <div className="pointer-events-none absolute inset-0 bg-black/0 transition-colors duration-200 ease-out group-hover:bg-black/15" />
-  );
-}
+const chipClass =
+  "rounded-sm bg-white px-3 py-1.5 font-sans text-[12px] font-normal leading-none text-ink 3xl:text-[13px]";
 
-/* Skill chips — small white boxes pinned to the panel's bottom-left, one per
-   tag. Hidden until the card is hovered, then fade in over the darken layer.
-   Inter, like the captions. Sits above CardOverlay in the DOM so the
-   boxes stay bright against the dimmed art. */
-function TileTags({ tags }: { tags?: string[] }) {
-  if (!tags?.length) return null;
+// Hidden until hover or keyboard focus. Devices without hover (phones) show
+// it all the time, since there's no caption under the tile.
+const revealClass =
+  "pointer-events-none absolute inset-x-0 bottom-0 opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100 group-focus-visible:opacity-100 [@media(hover:none)]:opacity-100";
+
+/* The tile's name: title and subtitle as two white chips pinned to the
+   panel's bottom-left, over a faint shade that rises from the bottom edge so
+   the white chips stand off the white tiles. Only the strip behind the chips
+   shades; the rest of the tile stays as is. */
+function TileLabel({ title, subtitle }: { title: string; subtitle: string }) {
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-wrap gap-1.5 p-1.5 opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100">
-      {tags.map((tag) => (
-        <span
-          key={tag}
-          className="rounded-sm bg-white px-3 py-1.5 font-sans text-[12px] leading-none text-ink shadow-sm"
-        >
-          {tag}
-        </span>
-      ))}
-    </div>
+    <>
+      <div aria-hidden className={`${revealClass} h-24 rounded-b-sm bg-linear-to-t from-black/10 to-transparent`} />
+      <div className={`${revealClass} flex flex-wrap gap-1.5 p-1.5`}>
+        <h3 className={chipClass}>{title}</h3>
+        <span className={chipClass}>{subtitle}</span>
+      </div>
+    </>
   );
 }
 
@@ -463,54 +441,101 @@ function ProjectCard({ project }: { project: Project }) {
     );
   }
 
+  // Hover shrink: the panel eases down to 96% under the cursor and springs
+  // back on leave. transform-gpu keeps the scale on the compositor so the tile
+  // stays crisp. No caption underneath: the name shows on the tile on hover.
   const card = (
-    <>
-      <div className="w-full" style={{ aspectRatio: project.aspect }}>
-        <ProjectPanel project={project} />
-      </div>
-
-      {/* Caption — one line under the panel, like a credit: title in ink
-          (medium), a faint slash, then the subtitle in meta grey (regular).
-          Long ones wrap as running text. */}
-      <div className="pt-2 font-sans font-normal text-[12px] leading-[1.5]">
-        <h3 className="inline text-[12px] font-medium leading-[1.5] text-ink">{project.title}</h3>
-        <span aria-hidden className="mx-1 text-ink/25">/</span>
-        <span className="text-meta">{project.subtitle}</span>
-      </div>
-    </>
+    <div
+      className="relative w-full transform-gpu transition-transform duration-300 ease-out will-change-transform group-hover:scale-[0.96]"
+      style={{ aspectRatio: project.aspect }}
+    >
+      <ProjectPanel project={project} />
+      <TileLabel title={project.title} subtitle={project.subtitle} />
+    </div>
   );
 
   // No page yet: same card and hover, just not a link.
-  if (!project.href) return <div className="group">{card}</div>;
+  const href = project.href ?? caseStudyPath(project.id);
+  if (!href) return <div className="group">{card}</div>;
 
   return (
-    <a
-      href={project.href}
+    <Link
+      to={href}
       className="group block cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40"
     >
       {card}
-    </a>
+    </Link>
   );
 }
 
+/* ── Responsive columns ─────────────────────────────────────────────
+   Three columns from lg (1024px) exactly as placed above, two on tablets and
+   narrow windows from md (768px), one on phones. With fewer than three, tiles
+   go in reading order (1..14 in the map above), each into whichever column is
+   currently shortest, so the two columns end close to even. */
+const columnQueries = [
+  { count: 3, query: "(min-width: 64rem)" },
+  { count: 2, query: "(min-width: 48rem)" },
+];
+
+const currentColumnCount = () =>
+  columnQueries.find(({ query }) => window.matchMedia(query).matches)?.count ?? 1;
+
+function subscribeToColumnCount(onChange: () => void) {
+  const lists = columnQueries.map(({ query }) => window.matchMedia(query));
+  lists.forEach((list) => list.addEventListener("change", onChange));
+  return () => lists.forEach((list) => list.removeEventListener("change", onChange));
+}
+
+const useColumnCount = () => useSyncExternalStore(subscribeToColumnCount, currentColumnCount);
+
+/** Tile height per unit of width, from an aspect like "16 / 9". */
+function heightPerWidth(aspect: string) {
+  const [w, h] = aspect.split("/").map(Number);
+  return h / w;
+}
+
+function layoutColumns(count: number): Project[][] {
+  const shown = projects.filter((project) => !project.hidden);
+  const placed = ([1, 2, 3] as const).map((col) => shown.filter((project) => project.col === col));
+  if (count === 3) return placed;
+
+  // Read across the placed columns row by row.
+  const readingOrder: Project[] = [];
+  const rows = Math.max(...placed.map((col) => col.length));
+  for (let row = 0; row < rows; row++) {
+    for (const col of placed) if (col[row]) readingOrder.push(col[row]);
+  }
+
+  const columns: Project[][] = Array.from({ length: count }, () => []);
+  const heights: number[] = Array(count).fill(0);
+  for (const project of readingOrder) {
+    const shortest = heights.indexOf(Math.min(...heights));
+    columns[shortest].push(project);
+    heights[shortest] += heightPerWidth(project.aspect);
+  }
+  return columns;
+}
+
 export function ProjectGallery() {
+  const count = useColumnCount();
+  const columns = useMemo(() => layoutColumns(count), [count]);
+
   return (
     <section
       id="projects"
       data-name="Projects"
       className={`${column} pb-32 pt-10`}
     >
-      {/* Explicit columns: each column is an independent top-aligned stack, so
-          tiles land exactly where assigned and differing heights stagger the
-          columns. Stacks to one column below lg. */}
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:gap-2">
-        {([1, 2, 3] as const).map((col) => (
-          <div key={col} className="flex flex-1 flex-col gap-3">
-            {projects
-              .filter((project) => project.col === col && !project.hidden)
-              .map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              ))}
+      {/* Each column is an independent top-aligned stack, so differing tile
+          heights stagger the columns. The gap widens a touch on big monitors
+          to keep pace with the larger tiles. */}
+      <div className="flex items-start gap-2 3xl:gap-3">
+        {columns.map((tiles, i) => (
+          <div key={i} className="flex min-w-0 flex-1 flex-col gap-2 3xl:gap-3">
+            {tiles.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
           </div>
         ))}
       </div>

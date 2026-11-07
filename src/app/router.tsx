@@ -1,8 +1,8 @@
 import { useEffect, useState, type AnchorHTMLAttributes, type MouseEvent } from "react";
 
 /* ── Minimal path-based router ─────────────────────────────────────
-   The site has one real page plus a set of placeholders, so it doesn't
-   carry a router dependency — this is the whole thing.
+   The site is the home page plus a handful of project pages, so it
+   doesn't carry a router dependency — this is the whole thing.
 
    Navigation goes through the History API, which fires `popstate` only
    for back/forward, never for pushState. So `navigate` announces its own
@@ -21,8 +21,22 @@ export function navigate(to: string) {
   const current = window.location.pathname + window.location.hash;
   if (to === current) return;
 
+  // Remember where the page we're leaving was scrolled, so Back can return
+  // there (e.g. to the gallery row a project was opened from).
+  window.history.replaceState({ ...window.history.state, scrollY: window.scrollY }, "");
   window.history.pushState(null, "", to);
   window.dispatchEvent(new Event(NAVIGATE_EVENT));
+}
+
+/** The scroll position saved for the current history entry, if any. */
+export function savedScrollY(): number | undefined {
+  const y = window.history.state?.scrollY;
+  return typeof y === "number" ? y : undefined;
+}
+
+/** "/projects/foo/" → "/projects/foo"; "/" stays "/". */
+export function normalizePath(path: string) {
+  return path.length > 1 ? path.replace(/\/+$/, "") || "/" : path;
 }
 
 /** Current path + hash, kept in sync with pushState, back/forward, and hash jumps. */
@@ -47,7 +61,7 @@ export function useLocation(): Location {
 }
 
 /** True when the click should be left to the browser (new tab, download, etc.). */
-function isModifiedClick(event: MouseEvent<HTMLAnchorElement>) {
+export function isModifiedClick(event: MouseEvent<HTMLAnchorElement>) {
   return (
     event.defaultPrevented ||
     event.button !== 0 ||

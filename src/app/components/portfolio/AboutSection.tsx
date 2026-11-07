@@ -17,16 +17,16 @@ export function AboutSection() {
   return (
     <section id="about" data-name="About" className={`${column} pb-32`}>
       <div className="grid gap-8 border-t border-ink/10 pt-16 lg:grid-cols-[1fr_2fr] lg:gap-16">
-        <h2 className="font-sans font-medium text-[14px] text-meta">About</h2>
+        <h2 className="font-sans font-medium text-[14px] text-meta 3xl:text-[16px]">About</h2>
 
         <div>
           <dl className="space-y-3">
             {aboutRows.map(({ label, values }) => (
               <div key={label} className="flex items-baseline gap-x-5">
-                <dt className="w-[92px] shrink-0 font-sans font-medium text-[16px] text-ink">
+                <dt className="w-[92px] shrink-0 font-sans font-medium text-[16px] text-ink 3xl:w-[104px] 3xl:text-[18px]">
                   {label}
                 </dt>
-                <dd className="min-w-0 space-y-1 font-sans text-[13px] text-meta sm:text-[14px]">
+                <dd className="min-w-0 space-y-1 font-sans text-[13px] text-meta sm:text-[14px] 3xl:text-[16px]">
                   {values.map((value) => (
                     <p key={value}>{value}</p>
                   ))}
@@ -44,9 +44,9 @@ export function AboutSection() {
                     href={href}
                     target={external ? "_blank" : undefined}
                     rel={external ? "noreferrer" : undefined}
-                    className="inline-flex items-center gap-2 font-sans font-medium text-[14px] text-meta transition-colors duration-200 hover:text-accent-blue"
+                    className="inline-flex items-center gap-2 font-sans font-medium text-[14px] text-meta transition-colors duration-200 hover:text-accent-blue 3xl:text-[16px]"
                   >
-                    <Icon fontSize="inherit" className="text-[16px]" />
+                    <Icon fontSize="inherit" className="text-[16px] 3xl:text-[18px]" />
                     {label}
                   </a>
                 </li>

@@ -3,6 +3,7 @@ import type { MouseEvent } from "react";
 import EmailIcon from "@mui/icons-material/Email";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import XIcon from "@mui/icons-material/X";
+import { isModifiedClick, navigate, normalizePath } from "@/app/router";
 
 // In page order. "#" links scroll to their section and ScrollNav highlights the
 // one in view; any other href opens in a new tab. The resume is served from
@@ -23,24 +24,42 @@ type SocialLink = {
 export const socialLinks: SocialLink[] = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/ryannchiou", Icon: LinkedInIcon },
   { label: "X", href: "https://x.com/ryann_chiou", Icon: XIcon },
-  { label: "Email", href: "mailto:ryann.chiou@gmail.com", Icon: EmailIcon },
+  { label: "Email", href: "mailto:rnchiou2@illinois.edu", Icon: EmailIcon },
 ];
+
+// Home-page anchors ("#projects") as seen from the current page: unchanged on
+// the home page, "/#projects" anywhere else so the link leads back home.
+export function homeAnchor(hash: string, onHome: boolean) {
+  return onHome ? hash : `/${hash}`;
+}
 
 // Smooth-scroll in-page nav clicks to their section. The global CSS keeps
 // scroll-behavior: auto (instant) for high-refresh displays, so we opt into
 // smooth here per-click — and fall back to an instant jump when the visitor
 // prefers reduced motion or the target isn't on the page.
+//
+// `href` is "#section" (this page) or "/path#section" (another page, which is
+// routed to; the page then lands on the anchor itself).
 export function handleNavClick(
   event: MouseEvent<HTMLAnchorElement>,
   href: string,
 ) {
-  if (!href.startsWith("#")) return;
+  const hashAt = href.indexOf("#");
+  if (hashAt === -1) return; // the resume, socials: leave to the browser
 
-  const target = document.getElementById(href.slice(1));
+  const path = href.slice(0, hashAt);
+  if (path && normalizePath(path) !== normalizePath(window.location.pathname)) {
+    if (isModifiedClick(event)) return;
+    event.preventDefault();
+    navigate(href);
+    return;
+  }
+
+  const target = document.getElementById(href.slice(hashAt + 1));
   if (!target) return; // unknown anchor — let the browser handle it
 
   event.preventDefault();
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
-  history.pushState(null, "", href);
+  history.pushState(null, "", href.slice(hashAt));
 }
