@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { navItems, handleNavClick } from "./navConfig";
+import { navItems, socialLinks, handleNavClick } from "./navConfig";
 import { column } from "./layout";
 
 // The section that counts as "current" once its top passes this fraction of the
@@ -111,9 +111,27 @@ export function ScrollNav() {
           })}
         </div>
 
-        {/* Right corner, reserved for the social buttons (socialLinks in
-            navConfig). */}
-        <div className="justify-self-end" />
+        {/* Socials in the right corner, muted like the page links. Hidden on
+            phones, where the name and links already fill the row. */}
+        <div className="hidden items-center gap-x-4 justify-self-end sm:flex">
+          {socialLinks.map(({ label, href, Icon }) => {
+            const external = href.startsWith("http");
+            return (
+              <a
+                key={label}
+                href={href}
+                aria-label={label}
+                title={label}
+                target={external ? "_blank" : undefined}
+                rel={external ? "noreferrer" : undefined}
+                tabIndex={visible ? undefined : -1}
+                className="flex text-[18px] text-meta transition-colors duration-200 hover:text-accent-blue"
+              >
+                <Icon fontSize="inherit" />
+              </a>
+            );
+          })}
+        </div>
       </nav>
     </div>
   );
