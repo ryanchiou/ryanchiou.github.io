@@ -142,7 +142,7 @@
   --color-ink: #2a2420;          /* text, calligraphy */
   --color-meta: #6f6962;         /* secondary metadata (4.9:1 on paper) */
   --color-meta-bright: #4a443f;  /* stronger metadata */
-  --color-accent-blue: #1a4fff;  /* electric blue — nav hover/current */
+  --color-accent-blue: #4400ff;  /* electric violet-blue — nav hover/current */
 }
 
 @layer base {

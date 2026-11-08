@@ -3,14 +3,15 @@
     pip install numpy opencv-python-headless scipy   # plus `cwebp` on PATH
     python scripts/corgi-layers.py [--pond] [source.png] [output-dir]
 
-Writes grass, tail, body, ear-l, ear-r, jaw, eyes-blink, eyes-happy, ball and
-grass-front as WebP on one shared canvas, so they stack with `inset: 0`. The
-tennis ball and the grass patch are painted here in the corgi's watercolor style.
+Writes tail, body, ear-l, ear-r, jaw, eyes-blink, eyes-happy and ball as WebP
+on one shared canvas, so they stack with `inset: 0`. The tennis ball is painted
+here in the corgi's watercolor style. The sunset wash behind him is painted
+separately, by scripts/corgi-sunset.py.
 
---pond paints a small pond in the accent blue beside him instead of the grass,
-plus a floor shadow, as one `ground` layer on a canvas widened for the pond.
-To use it, CorgiHero loads ground.webp in place of the two grass layers and
-CorgiHero.css, BALL_HIT and BALL_SPOTS take the new percentages printed below.
+--pond paints a small pond in the accent blue beside him, plus a floor shadow,
+as one `ground` layer on a canvas widened for the pond. To use it, CorgiHero
+loads ground.webp under the body, and CorgiHero.css, BALL_HIT, BALL_SPOTS and
+corgi-sunset.py's stage size take the new percentages printed below.
 
 Cut lines, eye positions and pivots are measured from this painting (source
 px). CorgiHero.css mirrors the canvas percentages printed at the end, so
@@ -176,9 +177,9 @@ def eye_patch(kind):
     return lids * (1 - stroke[..., None]) + INK * stroke[..., None], np.maximum(patch_a, stroke)
 
 # ── paint area ─────────────────────────────────────────────
-# The ball and ground are painted on an area wider than the painting (the
-# grass runs a little past the tail, the pond well past it); the final canvas
-# is cropped to fit them all.
+# The ball and pond are painted on an area wider than the painting (the canvas
+# runs a little past the tail, the pond well past it); the final canvas is
+# cropped from it.
 BALL_C, BALL_R = (196, GROUND - 66), 66
 CW = W + (480 if POND else 120)
 gy, gx = np.mgrid[0:H, 0:CW].astype(np.float32)
@@ -236,94 +237,6 @@ outline = np.maximum(ink_stroke(arc(BALL_C, BALL_R, -150, 118, 14), 13, (0.12, 0
                      ink_stroke(arc(BALL_C, BALL_R, 132, 196, 6), 12, (0.3, 0.3)))
 ball_col = ball_col * (1 - outline[..., None]) + INK * outline[..., None]
 ball_a = np.maximum(ball, outline)
-
-
-# ── grass patch, painted to match ──────────────────────────
-# A soft wash with a pooled wet edge and a deeper green under the paws, blades
-# clumping along the rim (taller toward the ends), and short flicks through the
-# wash. No ink outline: it stays background to the corgi. `grass` sits behind
-# him; `grass-front` is a few short blades in front of the paws.
-def paint_grass():
-    """The default ground: `grass` behind him, `grass-front` before his paws."""
-    grass_rng = np.random.default_rng(7)
-    GRASS_C, GRASS_R = (600, GROUND + 14), (540, 62)
-    GRASS_LIGHT = np.array([162, 228, 214], np.float32)  # BGR: spring green, warm to sit with the orange
-    GRASS_DEEP = np.array([66, 146, 100], np.float32)
-    BAND = (GROUND - 200, H)  # blades are drawn in this row band to keep it quick
-
-    def gnoise(sigma):
-        n = cv2.GaussianBlur(grass_rng.normal(0, 1, (H, CW)).astype(np.float32), (0, 0), sigma)
-        return n / (n.std() + 1e-6)
-
-    gcx, gcy = GRASS_C
-    u, v = (gx - gcx) / GRASS_R[0], (gy - gcy) / GRASS_R[1]
-    theta = np.arctan2(v, u)
-    wob = sum(amp * np.sin(k * theta + grass_rng.uniform(0, 6.28)) for k, amp in [(3, .05), (5, .04), (9, .025), (17, .015)])
-    r = np.hypot(u, v) - wob - 0.02 * gnoise(6)
-    wash = 1 - smoothstep(0.97, 1.0, r)
-    d = (0.36 + 0.14 * gnoise(26) + 0.05 * gnoise(5)
-         + 0.5 * np.exp(-np.clip((1 - r) * GRASS_R[1], 0, None) / 7)          # wet edge
-         + 0.5 * np.exp(-(((gx - 640) / 320) ** 2 + ((gy - (GROUND + 4)) / 30) ** 2)))  # under the paws
-    d = np.clip(d, 0, 1)[..., None]
-    grass_col = GRASS_LIGHT * (1 - d) + GRASS_DEEP * d
-    grass_a = wash * np.clip(0.28 + 0.66 * d[..., 0], 0, 1)
-
-    def blade_mask(base, height, width, lean, bend, ss=3):
-        """A tapered, slightly curved blade: wide at the base, pointed at the tip."""
-        t = np.linspace(0, 1, 24)
-        sx = base[0] + lean * height * t + bend * height * t ** 2
-        sy = base[1] - height * t
-        half = width / 2 * (1 - t) ** 0.9
-        nx, ny = np.gradient(sy), -np.gradient(sx)
-        nl = np.hypot(nx, ny) + 1e-6
-        poly = np.vstack([np.stack([sx + nx / nl * half, sy + ny / nl * half], 1),
-                          np.stack([sx - nx / nl * half, sy - ny / nl * half], 1)[::-1]])
-        bh = BAND[1] - BAND[0]
-        big = np.zeros((bh * ss, CW * ss), np.uint8)
-        cv2.fillPoly(big, [np.round((poly - [0, BAND[0]]) * ss).astype(np.int32)], 255, lineType=cv2.LINE_AA)
-        out = np.zeros((H, CW), np.float32)
-        out[BAND[0]:BAND[1]] = cv2.resize(big, (CW, bh), interpolation=cv2.INTER_AREA).astype(np.float32) / 255
-        return out
-
-    def paint_blades(items, col, a):
-        """items: (base, height, width, lean, bend, shade 0-1, alpha); painted over col/a."""
-        for base, h, w, lean, bend, shade, al0 in items:
-            m = blade_mask(base, h, w, lean, bend) * al0
-            c = GRASS_LIGHT * (1 - shade) + GRASS_DEEP * shade
-            col = c * m[..., None] + col * (1 - m[..., None])
-            a = m + a * (1 - m)
-        return col, a
-
-    g = grass_rng
-    flicks = []
-    for _ in range(60):  # short flicks through the wash
-        th, rr = g.uniform(-np.pi, np.pi), np.sqrt(g.uniform(0, 1)) * 0.95
-        flicks.append(((gcx + GRASS_R[0] * rr * np.cos(th), gcy + GRASS_R[1] * rr * np.sin(th)),
-                       g.uniform(14, 26), g.uniform(6, 9), g.uniform(-0.5, 0.5), g.uniform(-0.3, 0.3), g.uniform(0.55, 1), g.uniform(0.35, 0.6)))
-    rim = []
-    ph1, ph2 = g.uniform(0, 6.28, 2)
-    for th in np.linspace(-np.pi, np.pi, 96, endpoint=False) + g.uniform(0, 0.2):
-        th += g.uniform(-0.08, 0.08)
-        clump = (np.sin(3 * th + ph1) + 0.6 * np.sin(7 * th + ph2)) / 1.6  # -1..1 along the rim
-        if clump < -0.25 and g.uniform() < 0.8:  # sparse stretches between clumps
-            continue
-        ex, ey = np.cos(th), np.sin(th)
-        h = g.uniform(28, 58) * (0.55 + 0.9 * abs(ex) ** 3) * (1.0 if ey < 0 else 0.75) * (0.75 + 0.45 * max(clump, 0))
-        rim.append(((gcx + GRASS_R[0] * ex * 0.985, gcy + GRASS_R[1] * ey * 0.9 + g.uniform(-4, 4)),
-                    h, g.uniform(8, 13), 0.55 * ex + g.uniform(-0.25, 0.25), g.uniform(-0.3, 0.3), g.uniform(0.45, 1), g.uniform(0.75, 0.95)))
-
-    def tuft(center, n, hmin, hmax, spread):
-        out = []
-        for _ in range(n):
-            bx = center[0] + g.uniform(-spread, spread)
-            out.append(((bx, center[1] + g.uniform(-6, 6)), g.uniform(hmin, hmax), g.uniform(7, 11),
-                        g.uniform(-0.45, 0.45) + (bx - center[0]) / spread * 0.25, g.uniform(-0.25, 0.25), g.uniform(0.35, 0.95), g.uniform(0.75, 0.95)))
-        return out
-
-    grass_col, grass_a = paint_blades(flicks + rim + tuft((90, 1172), 6, 40, 90, 34) + tuft((1110, 1176), 7, 40, 95, 36), grass_col, grass_a)
-    front_col, front_a = paint_blades(tuft((430, 1226), 4, 22, 42, 26) + tuft((770, 1230), 4, 22, 42, 30) + tuft((300, 1236), 3, 18, 34, 20),
-                                      np.zeros((H, CW, 3), np.float32), np.zeros((H, CW), np.float32))
-    return [('grass', grass_col, grass_a), ('grass-front', front_col, front_a)]
 
 
 # ── pond, painted to match ─────────────────────────────────
@@ -397,23 +310,19 @@ def paint_pond():
     return [('ground', ground_col, ground_a)]
 
 
-ground_layers = paint_pond() if POND else paint_grass()
+ground_layers = paint_pond() if POND else []
 
 # ── canvas ─────────────────────────────────────────────────
-drawn = np.pad(alpha, ((0, 0), (0, CW - W))) > 0.02
-drawn |= ball_a > 0.02
-for _, _, a_ in ground_layers:
-    drawn |= a_ > 0.02
-ys, xs = np.where(drawn)
+# The fixed canvas every percentage in CorgiHero.css, ballBounce.ts and
+# corgi-sunset.py is measured on (588x579 once scaled). It was first sized to
+# fit a grass patch under him, so there's a little air below the paws and past
+# the tail. With --pond the right edge widens to take in the pond.
+x0, x1, y0, y1 = 4, 1180, 111, 1269
 if POND:
-    # Same left, top and bottom as the grass canvas, so the corgi keeps its
-    # on-screen size and the CSS's vertical percentages hold; the right edge
-    # takes in the pond, plus a little air.
-    x0, y0, y1 = 4, 111, 1269
-    x1 = xs.max() + 16
-else:
-    # Everything drawn, plus a little air.
-    x0, x1, y0, y1 = max(xs.min() - 16, 0), xs.max() + 16, ys.min() - 16, min(ys.max() + 16, H)
+    drawn = np.zeros((H, CW), bool)
+    for _, _, a_ in ground_layers:
+        drawn |= a_ > 0.02
+    x1 = max(x1, np.where(drawn)[1].max() + 16)
 
 # ── write layers ───────────────────────────────────────────
 TMP = tempfile.mkdtemp()

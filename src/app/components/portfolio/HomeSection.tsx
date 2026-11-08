@@ -1,7 +1,7 @@
 import { column } from "./layout";
 
-// The watercolor corgi (CorgiHero) used to sit on the right of this intro.
-// It's kept in CorgiHero.tsx to be placed somewhere else later.
+// The watercolor corgi in his sunset meadow (CorgiHero) used to sit beside this
+// intro. It's set aside in CorgiHero.tsx for the About page.
 
 export function HomeSection() {
   return (

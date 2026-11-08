@@ -1,21 +1,37 @@
-/* Watercolor corgi. Every layer shares the 588×579 canvas from
-   scripts/corgi-layers.py, so percentages below are canvas percentages (the
-   script prints each one). */
+/* Watercolor corgi sitting in a sunset meadow. The scene
+   (scripts/corgi-sunset.py, 1586×996) is the component's box, and the corgi
+   sits on it in a "stage": the 588×579 canvas every corgi layer shares
+   (scripts/corgi-layers.py). Percentages inside the stage are canvas
+   percentages; both scripts print theirs. */
 
 .corgi {
-  --h: clamp(140px, 13vw, 196px);
+  --h: clamp(140px, 13vw, 196px); /* the stage's height: how big he is */
   position: relative;
-  width: calc(var(--h) * 588 / 579);
-  height: var(--h);
+  width: calc(var(--h) * 1586 / 579);
+  max-width: 100%; /* shrinks to fit a phone, or the room beside the headline */
+  aspect-ratio: 1586 / 996;
   -webkit-tap-highlight-color: transparent;
 }
+/* Big monitors (the site's 3xl breakpoint, 1920px+): the hero headline keeps
+   growing there (min(2.5vw, 72px)), so he grows with it at the same 196:48
+   ratio he has beside the 48px laptop headline. That's 196px at 1920, 261px at
+   2560, and 294px at most, which is the art's full resolution on a 2x screen. */
+@media (width >= 120rem) {
+  .corgi { --h: calc(min(2.5vw, 72px) * 196 / 48); }
+}
+
+/* On the right of the scene, sitting in the grass. The scene's front tufts
+   (a second .corgi__sunset after the stage) sit over his paws. */
+.corgi__stage { position: absolute; left: 45.71%; top: 28.92%; width: 37.07%; height: 58.13%; }
 
 .corgi__art { position: absolute; inset: 0; pointer-events: none; }
+.corgi__sunset,
 .corgi__art img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+  pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;
 }
@@ -49,7 +65,7 @@
 .corgi__hit:hover ~ .corgi__art .corgi__tail { animation-duration: .32s; }
 .corgi[data-happy="true"] .corgi__tail { animation-duration: .18s; }
 
-/* ── pettable area: the dog, not the ball or the grass ─── */
+/* ── pettable area: the dog, not the ball ──────────────── */
 .corgi__hit {
   position: absolute;
   z-index: 2;
@@ -83,7 +99,7 @@
 .corgi__ball-layer { position: absolute; inset: 0; }
 .corgi__ball { transform-origin: 16.33% 85.92%; transition: rotate .3s ease; }
 .corgi__ball-hit:hover ~ .corgi__art .corgi__ball { rotate: -14deg; }
-/* A soft shadow on the grass that shrinks while the ball is up. */
+/* A soft shadow in the meadow's indigo that shrinks while the ball is up. */
 .corgi__ball-shadow {
   position: absolute;
   left: 16.33%;
@@ -92,7 +108,7 @@
   height: 3.2%;
   translate: -50% -50%;
   border-radius: 50%;
-  background: radial-gradient(closest-side, rgb(48 72 30 / .45), transparent);
+  background: radial-gradient(closest-side, rgb(54 62 116 / .32), transparent);
 }
 /* He watches it go: ears up, tail going. */
 .corgi[data-bounce="true"] .corgi__ear--l { rotate: 5deg; }

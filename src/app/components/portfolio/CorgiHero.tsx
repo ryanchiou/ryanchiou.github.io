@@ -7,8 +7,8 @@ import jawSrc from "@/assets/elements/corgi/jaw.webp";
 import eyesBlinkSrc from "@/assets/elements/corgi/eyes-blink.webp";
 import eyesHappySrc from "@/assets/elements/corgi/eyes-happy.webp";
 import ballSrc from "@/assets/elements/corgi/ball.webp";
-import grassSrc from "@/assets/elements/corgi/grass.webp";
-import grassFrontSrc from "@/assets/elements/corgi/grass-front.webp";
+import sunsetSrc from "@/assets/elements/corgi/sunset.webp";
+import sunsetFrontSrc from "@/assets/elements/corgi/sunset-front.webp";
 import { BALL_SPOTS, bounceBall } from "./ballBounce";
 import "./CorgiHero.css";
 
@@ -16,9 +16,10 @@ const HAPPY_MS = 1600; // happy eyes + quick wag after a pet
 const BALL_HIT = { left: 7.58, top: 77.03 }; // the ball's click target at its painted spot (canvas %)
 
 /**
- * The sitting watercolor corgi from corgi.png on a painted patch of grass, cut
- * into layers (see scripts/corgi-layers.py) so small parts can move: the tail
- * wags, the jaw pants, the eyes blink and an ear flicks now and then. Petting
+ * The sitting watercolor corgi from corgi.png in a painted sunset meadow
+ * (scripts/corgi-sunset.py). He's cut into layers (scripts/corgi-layers.py)
+ * so small parts can move: the tail wags, the jaw pants, the eyes blink and an
+ * ear flicks now and then. Petting
  * him squints his eyes happily and speeds up the wag; clicking the ball bounces
  * it (see ballBounce.ts) while he watches, ears up and tail going.
  */
@@ -99,27 +100,29 @@ export function CorgiHero({ className = "" }: { className?: string }) {
   return (
     <div className={className}>
       <div ref={rootRef} className="corgi" data-happy={happy}>
-        <button type="button" className="corgi__hit" aria-label="Pet the corgi" onClick={pet} />
-        <button ref={ballHitRef} type="button" className="corgi__ball-hit" aria-label="Bounce the tennis ball" onClick={bounce} />
-        <div className="corgi__art" aria-hidden="true">
-          <img src={grassSrc} alt="" draggable={false} />
-          <img className="corgi__tail" src={tailSrc} alt="" draggable={false} />
-          <img src={bodySrc} alt="" draggable={false} />
-          <img className="corgi__ear corgi__ear--l" src={earLSrc} alt="" draggable={false} />
-          <img className="corgi__ear corgi__ear--r" src={earRSrc} alt="" draggable={false} />
-          <img className="corgi__jaw" src={jawSrc} alt="" draggable={false} />
-          <img className="corgi__eyes corgi__eyes--blink" src={eyesBlinkSrc} alt="" draggable={false} />
-          <img className="corgi__eyes corgi__eyes--happy" src={eyesHappySrc} alt="" draggable={false} />
-          <span ref={ballXRef} className="corgi__ball-layer">
-            <span ref={ballGroundRef} className="corgi__ball-layer">
-              <span ref={shadowRef} className="corgi__ball-shadow" />
+        <img className="corgi__sunset" src={sunsetSrc} alt="" aria-hidden="true" draggable={false} />
+        <div className="corgi__stage">
+          <button type="button" className="corgi__hit" aria-label="Pet the corgi" onClick={pet} />
+          <button ref={ballHitRef} type="button" className="corgi__ball-hit" aria-label="Bounce the tennis ball" onClick={bounce} />
+          <div className="corgi__art" aria-hidden="true">
+            <img className="corgi__tail" src={tailSrc} alt="" draggable={false} />
+            <img src={bodySrc} alt="" draggable={false} />
+            <img className="corgi__ear corgi__ear--l" src={earLSrc} alt="" draggable={false} />
+            <img className="corgi__ear corgi__ear--r" src={earRSrc} alt="" draggable={false} />
+            <img className="corgi__jaw" src={jawSrc} alt="" draggable={false} />
+            <img className="corgi__eyes corgi__eyes--blink" src={eyesBlinkSrc} alt="" draggable={false} />
+            <img className="corgi__eyes corgi__eyes--happy" src={eyesHappySrc} alt="" draggable={false} />
+            <span ref={ballXRef} className="corgi__ball-layer">
+              <span ref={ballGroundRef} className="corgi__ball-layer">
+                <span ref={shadowRef} className="corgi__ball-shadow" />
+              </span>
+              <span ref={ballYRef} className="corgi__ball-layer">
+                <img ref={ballRef} className="corgi__ball" src={ballSrc} alt="" draggable={false} />
+              </span>
             </span>
-            <span ref={ballYRef} className="corgi__ball-layer">
-              <img ref={ballRef} className="corgi__ball" src={ballSrc} alt="" draggable={false} />
-            </span>
-          </span>
-          <img src={grassFrontSrc} alt="" draggable={false} />
+          </div>
         </div>
+        <img className="corgi__sunset" src={sunsetFrontSrc} alt="" aria-hidden="true" draggable={false} />
       </div>
     </div>
   );
