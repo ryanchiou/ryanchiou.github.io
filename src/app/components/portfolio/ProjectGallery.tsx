@@ -16,7 +16,7 @@ import hvboxImg from "@/assets/tiles_proj/hvbox.png";
 import tesseractImg from "@/assets/tiles_proj/tesseract.png";
 import undertrayImg from "@/assets/tiles_proj/undertray.png";
 import scanningRobotImg from "@/assets/tiles_proj/3D-scanning_robotic-arm.png";
-import vrCushionImg from "@/assets/tiles_proj/vr-headset_cushion.png";
+import vrCushionImg from "@/assets/tiles_proj/lattice-vr-cushion.png";
 import coolingSleeveImg from "@/assets/tiles_proj/lattice_cooling-sleeve.png";
 import hydraImg from "@/assets/tiles_proj/hydra.png";
 import skinsImg from "@/assets/tiles_proj/skins.png";
@@ -91,7 +91,7 @@ export function findTile(id: string): BrandProject | PhotoProject | undefined {
 // the tiles number 1..14:
 //   Col 1: Tesla (1) / HV Electronics Packaging (4) / Tesseract (7) / Carbon Fiber Undertray (10)
 //   Col 2: 3D Scanning Robotic Arm (2) / Guccibot (5) / Tally (8) / Triggerfish (11) / Project Hydra (13)
-//   Col 3: VR Headset Cushion (3) / Actuator Cooling Sleeve (6) / IBM (9) / Skins (12) / Flounder (14)
+//   Col 3: Custom-Fit Lattice VR Cushion (3) / Actuator Cooling Sleeve (6) / IBM (9) / Skins (12) / Flounder (14)
 // Coming soon is hidden; shown, it leads column 1 and the rest shift down a spot.
 const projects: Project[] = [
   // ── Column 1 ────────────────────────────────────────────────────────────
@@ -248,13 +248,13 @@ const projects: Project[] = [
     alt: "Project Hydra liquid-cooled mini-ITX PC with custom water-cooling loop",
   },
   // ── Column 3 ────────────────────────────────────────────────────────────
-  // VR Headset Cushion (tile 3). Lattice face cushion with its ground shadow (object
-  // aspect 1.65), in the first row's 16/10 landscape tile.
+  // Custom-Fit Lattice VR Cushion (tile 3). Lattice face cushion with its
+  // ground shadow (object aspect 1.78), in the first row's 16/10 landscape tile.
   {
     id: "vr-cushion",
     kind: "photo",
     col: 3,
-    title: "VR Headset Cushion",
+    title: "Custom-Fit Lattice VR Cushion",
     subtitle: "Additive Manufacturing",
     aspect: "16 / 10",
     src: vrCushionImg,

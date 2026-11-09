@@ -1,6 +1,6 @@
 import type { CaseStudy } from "@/app/components/project/types";
 
-// VR Headset Cushion. See robotArm.tsx for how sections are filled in.
+// Custom-Fit Lattice VR Cushion. See robotArm.tsx for how sections are filled in.
 export const vrCushion: CaseStudy = {
   slug: "vr-headset-cushion",
   tile: "vr-cushion",
