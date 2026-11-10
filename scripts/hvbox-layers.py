@@ -1,4 +1,4 @@
-"""Cut src/assets/tiles_proj/hvbox.png (the exploded HV enclosure render) into the
+"""Cut src/assets/projects/hvbox/hvbox.png (the exploded HV enclosure render) into the
 part layers HvboxExplode slides together into the assembled pose.
 
     pip install numpy scipy scikit-image pillow   # plus `cwebp` on PATH
@@ -29,8 +29,8 @@ from skimage.filters import sobel
 from skimage.segmentation import watershed
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "src/assets/tiles_proj/hvbox.png")
-OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(ROOT, "src/assets/tiles_proj/hvbox")
+SRC = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "src/assets/projects/hvbox/hvbox.png")
+OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(ROOT, "src/assets/projects/hvbox/layers")
 SCALE = 0.65  # the tile shows the render ~325 CSS px tall; this keeps 2x screens sharp
 
 if not shutil.which("cwebp"):

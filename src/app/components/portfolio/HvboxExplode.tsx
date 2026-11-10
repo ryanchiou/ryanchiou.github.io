@@ -1,8 +1,8 @@
 import { useEffect, useRef, type CSSProperties } from "react";
-import layout from "@/assets/tiles_proj/hvbox/layers.json";
+import layout from "@/assets/projects/hvbox/layers/layers.json";
 import "./HvboxExplode.css";
 
-const urls = import.meta.glob<string>("@/assets/tiles_proj/hvbox/*.webp", {
+const urls = import.meta.glob<string>("@/assets/projects/hvbox/layers/*.webp", {
   eager: true,
   import: "default",
 });

@@ -1,12 +1,12 @@
 import type { CaseStudy } from "@/app/components/project/types";
 import { Bullets, Eq, Figure, FigureGrid, P, Specs, Stats, Table } from "@/app/components/project/blocks";
-import stackup from "@/assets/projects/hv-enclosure/stackup.webp";
-import enclosureV1 from "@/assets/projects/hv-enclosure/enclosure-v1.webp";
-import wallFlat from "@/assets/projects/hv-enclosure/wall-flat.webp";
-import lidFlat from "@/assets/projects/hv-enclosure/lid-flat.webp";
-import exploded from "@/assets/projects/hv-enclosure/exploded.webp";
-import assembled from "@/assets/projects/hv-enclosure/assembled.webp";
-import internals from "@/assets/projects/hv-enclosure/internals.webp";
+import stackup from "@/assets/projects/hvbox/stackup.webp";
+import enclosureV1 from "@/assets/projects/hvbox/enclosure-v1.webp";
+import wallFlat from "@/assets/projects/hvbox/wall-flat.webp";
+import lidFlat from "@/assets/projects/hvbox/lid-flat.webp";
+import exploded from "@/assets/projects/hvbox/exploded.webp";
+import assembled from "@/assets/projects/hvbox/assembled.webp";
+import internals from "@/assets/projects/hvbox/internals.webp";
 
 // HV System Enclosure (Illini Electric Motorsports, FSAE Electric). Source:
 // the ME 199 FSAE final report, section 2. See robotArm.tsx for how sections

@@ -3,23 +3,23 @@ import { Link } from "@/app/router";
 import { caseStudyPath } from "@/app/projects";
 import { column } from "./layout";
 import { HvboxExplode } from "./HvboxExplode";
-import teslaLogo from "@/assets/tiles_corp/tesla_logo.jpg";
-import ibmLogo from "@/assets/tiles_corp/ibm_logo_blue.png";
+import teslaLogo from "@/assets/projects/tesla/tesla_logo.jpg";
+import ibmLogo from "@/assets/projects/ibm/ibm_logo_blue.png";
 // Project photos are CAD renders on white, pre-cropped to the object's bounding
 // box with a uniform margin and centered (source padding was inconsistent
 // across exports), so a single on-tile scale makes the objects read at a
 // consistent size.
-import guccibotImg from "@/assets/tiles_proj/guccibot_walker.png";
-import flounderImg from "@/assets/tiles_proj/flounder_rov.png";
-import triggerfishImg from "@/assets/tiles_proj/triggerfish_rov.png";
-import hvboxImg from "@/assets/tiles_proj/hvbox.png";
-import tesseractImg from "@/assets/tiles_proj/tesseract.png";
-import undertrayImg from "@/assets/tiles_proj/undertray.png";
-import scanningRobotImg from "@/assets/tiles_proj/3D-scanning_robotic-arm.png";
-import vrCushionImg from "@/assets/tiles_proj/lattice-vr-cushion.png";
-import coolingSleeveImg from "@/assets/tiles_proj/lattice_cooling-sleeve.png";
-import hydraImg from "@/assets/tiles_proj/hydra.png";
-import skinsImg from "@/assets/tiles_proj/skins.png";
+import guccibotImg from "@/assets/projects/walker/guccibot_walker.png";
+import flounderImg from "@/assets/projects/flounder/flounder_rov.png";
+import triggerfishImg from "@/assets/projects/triggerfish/triggerfish_rov.png";
+import hvboxImg from "@/assets/projects/hvbox/hvbox.png";
+import tesseractImg from "@/assets/projects/tesseract/tesseract.png";
+import undertrayImg from "@/assets/projects/undertray/undertray.png";
+import scanningRobotImg from "@/assets/projects/robot-arm/3D-scanning_robotic-arm.png";
+import vrCushionImg from "@/assets/projects/vr-cushion/lattice-vr-cushion.png";
+import coolingSleeveImg from "@/assets/projects/cooling-sleeve/lattice_cooling-sleeve.png";
+import hydraImg from "@/assets/projects/hydra/hydra.png";
+import skinsImg from "@/assets/projects/skins/skins.png";
 
 /* ── Project data ──────────────────────────────────────────────────
    The gallery is rendered straight from this array — add, remove, or
