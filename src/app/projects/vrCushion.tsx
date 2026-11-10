@@ -1,10 +1,7 @@
 import type { CaseStudy } from "@/app/components/project/types";
 import { Eq, Figure, FigureGrid, P, Specs, Stats, Table } from "@/app/components/project/blocks";
-import simRacing from "@/assets/projects/vr-cushion/sim-racing.webp";
-import pain from "@/assets/projects/vr-cushion/pain.webp";
 import pdtFemale from "@/assets/projects/vr-cushion/pdt-female.webp";
 import pdtMale from "@/assets/projects/vr-cushion/pdt-male.webp";
-import pressureZones from "@/assets/projects/vr-cushion/pressure-zones.webp";
 import sketch from "@/assets/projects/vr-cushion/sketch.webp";
 import mockupSide from "@/assets/projects/vr-cushion/mockup-side.webp";
 import mockupFront from "@/assets/projects/vr-cushion/mockup-front.webp";
@@ -47,23 +44,12 @@ export const vrCushion: CaseStudy = {
         {
           title: "Background",
           body: (
-            <>
-              <P>
-                A VR headset rests on the face through a foam cushion, held there by strap tension. For a
-                quick game that works. For sessions measured in hours, such as a sim-racing stint, a
-                fitness workout or a teleoperation shift, the cushion becomes the limit on how long
-                someone can keep the headset on.
-              </P>
-              <FigureGrid
-                items={[
-                  { src: simRacing, alt: "Sim racer in a motion rig wearing a VR headset" },
-                  { src: pain, alt: "Person pressing their cheekbone below a VR headset, wincing" },
-                ]}
-                aspect="2 / 1"
-                fill
-                caption="Hours-long sessions like sim racing (left) are where a face cushion starts to hurt (right)."
-              />
-            </>
+            <P>
+              A VR headset rests on the face through a foam cushion, held there by strap tension. For a
+              quick game that works. For sessions measured in hours, such as a sim-racing stint, a
+              fitness workout or a teleoperation shift, the cushion becomes the limit on how long someone
+              can keep the headset on.
+            </P>
           ),
         },
         {
@@ -145,13 +131,6 @@ export const vrCushion: CaseStudy = {
                 it contacts each face at its high points, the brow ends and cheekbones, which concentrates
                 load where tolerance is lowest.
               </P>
-              <Figure
-                src={pressureZones}
-                alt="Face with a heat map of cushion contact pressure, peaking at the brow ends and cheekbones"
-                caption="Where a one-size cushion concentrates its pressure: the brow ends and cheekbones (illustrative)."
-                aspect="887 / 499"
-                fill
-              />
               <P>
                 That sets two rules for the design: carry the load on the forehead, and keep it off the
                 cheekbones and the nose bridge.
