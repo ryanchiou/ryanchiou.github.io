@@ -1,11 +1,26 @@
+# portfolio
 
-  # Personal Portfolio Website
+Source for [ryanchiou.github.io](https://ryanchiou.github.io). Built with React and Vite, and deployed to GitHub Pages on every push to `main`.
 
-  This is a code bundle for Personal Portfolio Website. The original project is available at https://www.figma.com/design/pIA0LV4hVeVyq9MMPM25sy/Personal-Portfolio-Website.
+## Running locally
 
-  ## Running the code
+```sh
+npm i
+npm run dev
+```
 
-  Run `npm i` to install the dependencies.
+## Layout
 
-  Run `npm run dev` to start the development server.
-  
+```
+src/
+  app/
+    components/portfolio/   home page sections (hero, gallery, about, nav)
+    components/project/     case-study page template and blocks
+    projects/               one file per case study
+  assets/
+    elements/               site-wide art: profile photo, logos, corgi layers
+    projects/<project>/     each project's home-page tile and case-study images
+  styles/                   fonts, Tailwind, theme tokens
+public/                     files served as-is (resume, fonts)
+scripts/                    Python scripts that cut source art into layers
+```
