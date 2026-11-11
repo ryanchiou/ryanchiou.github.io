@@ -1,5 +1,5 @@
 import type { CaseStudy } from "@/app/components/project/types";
-import { Bullets, Eq, Figure, FigureGrid, P, Specs, Stats, Table } from "@/app/components/project/blocks";
+import { Bullets, Eq, Figure, FigureGrid, P, Placeholder, Specs, Stats, Table } from "@/app/components/project/blocks";
 import concept from "@/assets/projects/robot-arm/concept.webp";
 import workspace from "@/assets/projects/robot-arm/workspace.webp";
 import armModel from "@/assets/projects/robot-arm/arm-model.webp";
@@ -18,8 +18,6 @@ import fusionPipeline from "@/assets/projects/robot-arm/fusion-pipeline.webp";
 import poseSetup from "@/assets/projects/robot-arm/pose-setup.webp";
 import bunny from "@/assets/projects/robot-arm/bunny.webp";
 import crossSection from "@/assets/projects/robot-arm/cross-section.webp";
-import waterjet from "@/assets/projects/robot-arm/waterjet.webp";
-import prints from "@/assets/projects/robot-arm/prints.webp";
 import softwareFlow from "@/assets/projects/robot-arm/software-flow.webp";
 import dh from "@/assets/projects/robot-arm/dh.webp";
 import ik from "@/assets/projects/robot-arm/ik.webp";
@@ -442,6 +440,28 @@ export const robotArm: CaseStudy = {
               </P>
               <Figure src={cleat} alt="Point cloud of a soccer cleat" caption="Helios2+ Narrow point cloud of a soccer cleat." natural aspect="812 / 392" />
               <P>
+                Turntable tests then checked multi-view capture before the arm existed. With the camera
+                fixed 0.5 m away, a motorized rotation stage turned a printed bracket through five angles,
+                −60° to +60° in 30° steps. The second run produced far cleaner single views and a much
+                tighter fused model than the first.
+              </P>
+              <Figure
+                src={scanViews}
+                alt="Five single-view point clouds of the bracket from −60° to +60°"
+                caption="Test 2: single views at −60°, −30°, 0°, +30° and +60°."
+                aspect="1800 / 292"
+                natural
+                inset={8}
+              />
+              <FigureGrid
+                items={[
+                  { src: turntableTest, alt: "Printed bracket on the turntable under the camera" },
+                  { src: scanFused, alt: "Fused five-view point cloud of the bracket" },
+                ]}
+                fill
+                caption="The test part on the turntable (left) and its fused five-view cloud (right)."
+              />
+              <P>
                 We tuned the camera in our own Python capture app, built on LUCID's Arena SDK.
                 Accumulating frames and filtering trade capture time for lower depth noise; this set gave
                 the cleanest clouds of our test parts:
@@ -539,14 +559,6 @@ export const robotArm: CaseStudy = {
             waterjet-cut at the campus Engineering Student Design Center at no cost. Hardware comes from
             McMaster-Carr. Printed fits carry manufacturing tolerances in the CAD.
           </P>
-          <FigureGrid
-            items={[
-              { src: waterjet, alt: "Aluminum link plates cut on the waterjet" },
-              { src: prints, alt: "First printed PLA joint housings and pulleys" },
-            ]}
-            fill
-            caption="Left: link plates on the waterjet, with lobed drive profiles and lightening slots. Right: the first printed joint housings and pulleys."
-          />
           <P>
             As of early November, the aluminum parts are cut, printing is underway, the steppers have
             arrived and the servos are in transit; J1–J3 assembly is next. The proposal-stage estimate was $1,526
@@ -610,29 +622,11 @@ export const robotArm: CaseStudy = {
       body: (
         <>
           <P>
-            Testing is staged so each error source is isolated before the next one is added: the camera
-            alone, then multi-view fusion on a turntable, then the arm.
+            System validation tests the assembled scanner end to end against its specification: the arm,
+            camera, turntable and fusion software scanning a part together.
           </P>
-          <P>
-            The turntable tests captured a printed bracket from five angles, −60° to +60°. The second
-            run produced far cleaner single views and a much tighter fused model than the first.
-          </P>
-          <Figure
-            src={scanViews}
-            alt="Five single-view point clouds of the bracket from −60° to +60°"
-            caption="Test 2: single views at −60°, −30°, 0°, +30° and +60°."
-            aspect="1800 / 292"
-            natural
-            inset={8}
-          />
-          <FigureGrid
-            items={[
-              { src: turntableTest, alt: "Printed bracket on the turntable under the camera" },
-              { src: scanFused, alt: "Fused five-view point cloud of the bracket" },
-            ]}
-            fill
-            caption="The test part on the turntable (left) and its fused five-view cloud (right)."
-          />
+          {/* TODO: the Baby Yoda study goes here. */}
+          <Placeholder />
           <P>
             Arm-level tests run after assembly, ahead of the November 17 trade show. Repeatability follows
             ISO 9283: the arm returns to each of 5 poses 30 times with the camera installed, at operating
